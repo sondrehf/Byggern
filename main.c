@@ -9,6 +9,8 @@
 #include <util/delay.h>                // for _delay_ms()
 #include <avr/io.h>
 #include "uart.h"
+#include <stdio.h>
+
 
 
 
@@ -16,19 +18,21 @@ int main(void){
     //DDRA=0x1; //konfigurere pins. Satt DDRA0 til å være output.
     //unsigned int i = 1;
     USART_init(MYUBRR);
+    printf_init();
     while(1){
      /* PORTA = (1 << PA0); //Setter
       _delay_ms(200);
       PORTA = (0 << PA0);
       _delay_ms(200);
       //_NOP();
+
+
+    char a = USART_receive();
+    USART_transmit(a);
 */
-      char a = USART_receive();
-      USART_transmit(a);
-      
-    //USART_transmit('B');
-    //USART_transmit(USART_receive());
-    //_delay_ms(200);
+    printf("Hei\r\n");
+    _delay_ms(200);
+    //USART_receive();
     }
     return 0;
 }

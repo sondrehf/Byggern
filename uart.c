@@ -1,5 +1,6 @@
 //#include <util/delay.h>                // for _delay_ms()
 #include <avr/io.h>
+#include <stdio.h>
 //#include <util/delay.h>
 
 
@@ -11,7 +12,7 @@ void USART_init(unsigned int ubrr){
   UCSR0B = (1<<RXEN0) | (1<<TXEN0);
   //UCSRB = 0b00011000 //equivalent with over
   //Setting frame format, 8 data, 2 stop
-  UCSR0C = (1<<URSEL0) | (1<<USBS0) | (1<<UCSZ00) | (1<<UCSZ01);
+  UCSR0C = (1<<URSEL0) | (1<<USBS0) | (1<<UCSZ00) | (1<<UCSZ01) ;
 }
 
 void USART_transmit(uint8_t message){
@@ -25,4 +26,10 @@ char USART_receive(){
 */
 while(!(UCSR0A & (1 << RXC0)));
     return UDR0;
+}
+
+//void fdevopen(USART_transmit(), USART_receive())
+
+FILE* printf_init(){
+    return fdevopen(USART_transmit, USART_receive);
 }
