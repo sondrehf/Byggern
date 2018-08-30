@@ -23,8 +23,11 @@ int main(void){
       _delay_ms(200);
       //_NOP();
 */
+      char a = USART_receive();
+      USART_transmit(a);
+      
     //USART_transmit('B');
-    USART_transmit(USART_receive());
+    //USART_transmit(USART_receive());
     //_delay_ms(200);
     }
     return 0;
