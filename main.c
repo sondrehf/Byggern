@@ -1,5 +1,5 @@
 #ifndef F_CPU
-#define F_CPU 16000000UL // or whatever may be your frequency
+#define F_CPU 4915200 // or whatever may be your frequency
 #endif
 
 #define FOSC 4915200// Clock Speed
@@ -9,6 +9,8 @@
 #include <util/delay.h>                // for _delay_ms()
 #include <avr/io.h>
 #include "uart.h"
+#include "latch.h"
+#include "sRAM.h"
 #include <stdio.h>
 
 
@@ -19,19 +21,24 @@ int main(void){
     //unsigned int i = 1;
     USART_init(MYUBRR);
     printf_init();
+    latch_init();
+    SRAM_test();
+
+
     while(1){
-     /* PORTA = (1 << PA0); //Setter
+      /*PORTA = (1 << PA0); //Setter
       _delay_ms(200);
       PORTA = (0 << PA0);
       _delay_ms(200);
-      //_NOP();
+      //_NOP();*/
 
 
-    char a = USART_receive();
-    USART_transmit(a);
-*/
-    printf("Hei\r\n");
-    _delay_ms(200);
+    test_latch();
+    //char a = USART_receive();
+    //USART_transmit(a);
+
+    //printf("Hei\r\n");
+  //  _delay_ms(200);
     //USART_receive();
     }
     return 0;
