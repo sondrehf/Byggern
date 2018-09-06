@@ -22,17 +22,24 @@ int main(void){
     USART_init(MYUBRR);
     printf_init();
     extern_mem_init();
-    SRAM_test();
+    //SRAM_test();
 
 
+    /*
+    GAL - config (Running someone else's program)
+    sram = top (something wrong with program)
+    Oled = middle
+    ADC = down
+
+    */
 
     while(1){
-        /*volatile char *ext_ram = (char *) 0x1801;
-        *ext_ram=0;
-        _delay_ms(200);
-        ext_ram=0x1700;
+        volatile char *ext_ram = (char *) 0x1901;
         *ext_ram = 0;
-        _delay_ms(200);*/
+        _delay_ms(200);
+        ext_ram=0x1900;
+        *ext_ram = 0;
+        _delay_ms(200);
       /*PORTA = (1 << PA0); //Setter
       _delay_ms(200);
       PORTA = (0 << PA0);
