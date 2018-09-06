@@ -6,7 +6,7 @@
 #define BAUD 9600
 #define MYUBRR FOSC/16/BAUD-1
 
-#include <util/delay.h>                // for _delay_ms()
+#include <util/delay.h>           // for _delay_ms()
 #include <avr/io.h>
 #include "uart.h"
 #include "latch.h"
@@ -21,11 +21,18 @@ int main(void){
     //unsigned int i = 1;
     USART_init(MYUBRR);
     printf_init();
-    latch_init();
+    extern_mem_init();
     SRAM_test();
 
 
+
     while(1){
+        /*volatile char *ext_ram = (char *) 0x1801;
+        *ext_ram=0;
+        _delay_ms(200);
+        ext_ram=0x1700;
+        *ext_ram = 0;
+        _delay_ms(200);*/
       /*PORTA = (1 << PA0); //Setter
       _delay_ms(200);
       PORTA = (0 << PA0);
@@ -33,7 +40,7 @@ int main(void){
       //_NOP();*/
 
 
-    test_latch();
+    //test_latch();
     //char a = USART_receive();
     //USART_transmit(a);
 

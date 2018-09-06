@@ -4,7 +4,7 @@
 #include <avr/io.h>
 #include <util/delay.h>                // for _delay_ms()
 
-void latch_init(){
+void extern_mem_init(){
   MCUCR = (1<<SRE);
 }
 void test_latch(){
