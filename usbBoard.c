@@ -29,10 +29,10 @@ enum joystick_direction get_joystick_direction(struct joystick_angle angle){
   if((angle.xRawValue < 132 && angle.xRawValue > 124) && (angle.yRawValue < 132 && angle.yRawValue > 124)){
     return NEUTRAL;
   }
-  else if (angle.xRawValue < 127 && (angle.yRawValue <= 210 && angle.yRawValue >= 70)){
+  else if (angle.xRawValue < 127 && (angle.yRawValue <= 200 && angle.yRawValue >= 80)){
     return LEFT;
   }
-  else if (angle.xRawValue > 127 && (angle.yRawValue <= 210 && angle.yRawValue >= 70)){
+  else if (angle.xRawValue > 127 && (angle.yRawValue <= 200 && angle.yRawValue >= 80)){
       return RIGHT;
   }
   else if (angle.yRawValue > 126 && (angle.xRawValue >= 0 && angle.xRawValue <= 255)) {
@@ -63,6 +63,30 @@ struct slider_pos calculate_slider(){
   return pos;
 }
 
+void print_dir(enum joystick_direction dir){
+  switch (dir) {
+  case NEUTRAL:
+    printf("Neutral\t\t");
+    break;
+  case UP:
+    printf("UP\t\t");
+    break;
+  case DOWN:
+    printf("DOWN\t\t");
+    break;
+  case RIGHT:
+    printf("RIGHT\t\t");
+    break;
+  case LEFT:
+    printf("LEFT\t\t");
+    break;
+  case ERROR:
+    printf("ERROR\t\t");
+    break;
+  default:
+    break;
+}
+}
 /*
 struct joystick_angle pos = calculate_angle();
 struct slider_pos slider = calculate_slider();

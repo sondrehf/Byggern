@@ -25,3 +25,5 @@ typedef struct slider_pos {
 };
 
 struct slider_pos calculate_slider();
+
+enum joystick_direction get_joystick_direction(struct joystick_angle angle);
