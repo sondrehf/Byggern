@@ -30,8 +30,12 @@ int main(void){
     oled_init();
     oled_reset();
 
-    struct menu_page mainMenu = menu_initialize();
-    printf("%s\n", mainMenu.options[5].name);
+    char* mainOptions[] = {"Start new game", "See/reset Highscore", "Calibrate joystick", "Set difficulty", "Debugging"};
+    struct menu_page mainMenu =  page_init("MAIN MENU", &mainMenu, 5, mainOptions);
+
+    char* startNewGameOpt[] = {"Yes", "No"};
+    struct menu_page startNewGame
+     =  page_init("Start New Game", &mainMenu, 2, startNewGameOpt);
 
 
     struct joystick_angle pos = calculate_angle();
@@ -41,27 +45,24 @@ int main(void){
 
     struct menu_page varMenu = mainMenu;
 
-
     while(1){
         pos = calculate_angle();
-        printf("%s",mainMenu.options[6].name);
         if (get_joystick_direction(pos) != dir){
             arrowPos = cursor_counter(varMenu, dir, arrowPos);
 
-            //print_dir(dir);
+            print_dir(dir);
             dir =  get_joystick_direction(pos);
             update_menu_page(varMenu, dir, arrowPos);
-            printf("%s",mainMenu.options[2].name);
+            printf("ArrowPos: %d ", arrowPos);
 
             if (dir == RIGHT){
                 oled_reset();
-                varMenu = varMenu.options[arrowPos];
+                varMenu = startNewGame;
             }
             if (dir == LEFT){
                 oled_reset();
                 varMenu = *varMenu.parent;
             }
-
 
         }
         _delay_ms(50);

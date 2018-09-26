@@ -1,14 +1,14 @@
 
-typedef struct Menu_page{
+struct menu_page{
     uint8_t size;
     char* name;
-    menu_page* parent;
-    menu_page options[6];
-} menu_page;
+    struct menu_page* parent;
+    char *options[6];
+    //struct* menu_page* child;
 
-menu_page page_init(const char* name, const menu_page* parent, const uint8_t size, const menu_page* options);
-void update_menu_page(menu_page page, enum joystick_direction dir,int position);
+};
 
-int cursor_counter(menu_page page, enum joystick_direction dir, int arrowPos);
+struct menu_page page_init(const char* name, const int* parent, const uint8_t size, const char* options[]);
+void update_menu_page(struct menu_page page, enum joystick_direction dir,int position);
 
-menu_page menu_initialize();
+int cursor_counter(struct menu_page page, enum joystick_direction dir, int arrowPos);
