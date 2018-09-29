@@ -30,37 +30,40 @@ int main(void){
     oled_init();
     oled_reset();
 
-    struct menu_page mainMenu = menu_initialize();
-    printf("%s\n", mainMenu.options[5].name);
+    menu_page mainMenu = menu_initialize();
+
+    //mainMenu.options[1].name = "Heisann";
+    //printf("%s\n", (*mainMenu.options[1]).name);
 
 
     struct joystick_angle pos = calculate_angle();
     enum joystick_direction dir=get_joystick_direction(pos);
     int arrowPos = 0;
-    update_menu_page(mainMenu, dir, arrowPos);
+    update_menu_page(mainMenu, dir, arrowPos, mainMenu.options);
 
-    struct menu_page varMenu = mainMenu;
-
+    menu_page varMenu = mainMenu;
 
     while(1){
         pos = calculate_angle();
-        printf("%s",mainMenu.options[6].name);
+        //printf("%s",mainMenu.options[6].name);
         if (get_joystick_direction(pos) != dir){
             arrowPos = cursor_counter(varMenu, dir, arrowPos);
+            printf("%d\n", arrowPos );
 
             //print_dir(dir);
             dir =  get_joystick_direction(pos);
-            update_menu_page(varMenu, dir, arrowPos);
-            printf("%s",mainMenu.options[2].name);
+            update_menu_page(varMenu, dir, arrowPos, varMenu.options);
+            //printf("%s",mainMenu.options[2].name);
 
-            if (dir == RIGHT){
+            if (dir == RIGHT && varMenu.options[arrowPos] != NULL){
                 oled_reset();
-                varMenu = varMenu.options[arrowPos];
+                varMenu = *varMenu.options[arrowPos];
             }
-            if (dir == LEFT){
+            if (dir == LEFT && varMenu.parent != NULL){
                 oled_reset();
                 varMenu = *varMenu.parent;
             }
+
 
 
         }

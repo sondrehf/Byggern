@@ -5,44 +5,67 @@
 #include "usbBoard.h"
 #include "menu.h"
 
-
-
-struct menu_page page_init(const char* name, const struct menu_page* parent, const uint8_t size, const struct menu_page* options){
-    struct menu_page page;
-    page.name = name; 
-    page.size = size; 
-    page.parent = parent; 
+menu_page page_init(const char* name, const menu_page* parent, const uint8_t size, const menu_page** options){
+    menu_page page;
+    page.name = name;
+    page.size = size;
+    page.parent = parent;
     for (int i = 0; i < page.size; i++){
         page.options[i] = options[i];
     }
+//  printf("%s\n", (*page.options[0]).name);
     return page;
 }
 
-struct menu_page menu_initialize(){
-    struct menu_page StartNewGame, SeeResetHighscore, CalibrateJoystick, SetDifficulty, Debugging, Yes, No, See, Reset, Easy, Medium, Hard;
+menu_page menu_initialize(){
 
-    struct menu_page mainOptions[] = {StartNewGame, SeeResetHighscore, CalibrateJoystick, SetDifficulty, Debugging};
-    struct menu_page mainMenu =  page_init("MAIN MENU", &mainMenu, 5, mainOptions);
+   menu_page mainMenu;
+   menu_page StartNewGame = page_init("Start New Game", &mainMenu, 0, NULL);
+   menu_page CalibrateJoystick = page_init("Calibrate Joystick", &mainMenu, 0, NULL);
+   menu_page SetDifficulty = page_init("Set Difficulty", &mainMenu, 0, NULL);
+   menu_page Debugging = page_init("Debug", &mainMenu, 0, NULL);
+   menu_page SeeResetHighscore = page_init("See/Reset Higscore", &mainMenu, 0, NULL);
+   menu_page mainOpt[] = {&StartNewGame, &SeeResetHighscore, &CalibrateJoystick, &SetDifficulty, &Debugging};
+   //mainOpt[0] = &StartNewGame;
+   //mainOpt[1] = &YIA;
+
+  //mainOpt = *StartNewGame;
+
+  mainMenu = page_init("Main Menu", NULL, 5, mainOpt);
+  return mainMenu;
+}
+
+/*
+menu_page menu_initialize(){
+    menu_page StartNewGame, SeeResetHighscore, CalibrateJoystick, SetDifficulty, Debugging, Yes, No, See, Reset, Easy, Medium, Hard;
+    menu_page mainOptions[2];
+    //menu_page mainOptions[] = {StartNewGame, SeeResetHighscore, CalibrateJoystick, SetDifficulty, Debugging};
+    mainOptions[0] = StartNewGame;
+    mainOptions[1] = SeeResetHighscore;
+
+    menu_page mainMenu =  page_init("MAIN MENU", &mainMenu, 2, mainOptions);
 
 
-    struct menu_page sngOptions[] = {Yes, No};
+    menu_page sngOptions[2];
+    sngOptions[0] = Yes;
+    sngOptions[1] = No;
     StartNewGame = page_init("Start New Game", &mainMenu, 2, sngOptions);
 
-    struct menu_page highScoreOptions[] = {See, Reset};
+    menu_page highScoreOptions[] = {See, Reset};
     SeeResetHighscore = page_init("See/Reset Highscore", &mainMenu, 2, highScoreOptions);
 
-    struct menu_page JoystickOptions[] = {};
+    menu_page JoystickOptions[] = {};
     CalibrateJoystick = page_init("Calibrate Joystick", &mainMenu, 0, NULL);
 
-    struct menu_page DifficultyOptions[] = {Easy, Medium, Hard};
+    menu_page DifficultyOptions[] = {Easy, Medium, Hard};
     SetDifficulty = page_init("Set Difficulty", &mainMenu, 3, DifficultyOptions);
 
-    struct menu_page DebuggingOptions[] = {}; 
+    menu_page DebuggingOptions[] = {};
     Debugging = page_init("Debugging", &mainMenu, 0, NULL);
 
-    return mainMenu; 
+    return mainMenu;page
 
-}
+}*/
 
 void OLED_print_arrow(uint8_t row, uint8_t col){
     oled_goto_pos(row, col);
@@ -61,28 +84,35 @@ void OLED_erase_arrow(uint8_t row, uint8_t col){
     write_d(0b00000000);
 }
 
-void update_menu_page(struct menu_page page, enum joystick_direction dir,int position){
+void update_menu_page(menu_page page, enum joystick_direction dir,int position, menu_page** options){
     oled_goto_pos(0, 0);//63-(strlen(page.name)/2));
-    oled_print(page.name,8);
+    int varFont = 8;
+    uint8_t strlength;
+    for(strlength = 0; page.name[strlength+1] != '\0'; ++strlength);
+    if(strlength > 16){
+      varFont=5;
+    }
+    oled_print(page.name,varFont);
     for(int i=0; i < page.size ; i++){
         if(i == position){
             OLED_print_arrow(2+(position), 0);
         }
-        
+
         if (dir == UP){
             OLED_erase_arrow(2+position, 0);
         }
         if (dir == DOWN){
             OLED_erase_arrow(2+position, 0);
         }
-
+        printf("%s\n", (*options[i]).name);
         oled_goto_page(i+2);
         oled_goto_column(10);
-        oled_print(page.options[i].name, 4);
+        oled_print((*options[i]).name, 4);
     }
+
 }
 
-int cursor_counter(struct menu_page page, enum joystick_direction dir, int arrowPos){
+int cursor_counter(menu_page page, enum joystick_direction dir, int arrowPos){
     if (dir == UP){
         arrowPos--;
             if((arrowPos)<0){
@@ -95,7 +125,5 @@ int cursor_counter(struct menu_page page, enum joystick_direction dir, int arrow
             arrowPos = 0;
         }
     }
-    return arrowPos; 
+    return arrowPos;
 }
-
-

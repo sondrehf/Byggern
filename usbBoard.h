@@ -2,6 +2,9 @@
 #include <stdio.h>
 #include <avr/io.h>
 
+#ifndef usbBoard_h
+#define usbBoard_h
+
 typedef struct joystick_angle {
   uint8_t xRawValue;
   uint8_t yRawValue;
@@ -27,3 +30,4 @@ typedef struct slider_pos {
 struct slider_pos calculate_slider();
 
 enum joystick_direction get_joystick_direction(struct joystick_angle angle);
+#endif

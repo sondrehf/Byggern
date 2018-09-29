@@ -1,6 +1,7 @@
 #include "usbBoard.h"
 #include "adc.h"
 
+
 uint8_t get_y_raw_value(){
   return get_channel_value(0);
 }
@@ -29,10 +30,10 @@ enum joystick_direction get_joystick_direction(struct joystick_angle angle){
   if((angle.xRawValue < 132 && angle.xRawValue > 124) && (angle.yRawValue < 132 && angle.yRawValue > 124)){
     return NEUTRAL;
   }
-  else if (angle.xRawValue < 127 && (angle.yRawValue <= 200 && angle.yRawValue >= 80)){
+  else if (angle.xRawValue < 80 && (angle.yRawValue <= 200 && angle.yRawValue >= 80)){
     return LEFT;
   }
-  else if (angle.xRawValue > 127 && (angle.yRawValue <= 200 && angle.yRawValue >= 80)){
+  else if (angle.xRawValue > 180 && (angle.yRawValue <= 200 && angle.yRawValue >= 80)){
       return RIGHT;
   }
   else if (angle.yRawValue > 126 && (angle.xRawValue >= 0 && angle.xRawValue <= 255)) {
