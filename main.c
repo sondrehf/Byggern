@@ -50,7 +50,7 @@ int main(void){
             arrowPos = cursor_counter(varMenu, dir, arrowPos);
             printf("%d\n", arrowPos );
 
-            //print_dir(dir);
+            print_dir(dir);
             dir =  get_joystick_direction(pos);
             update_menu_page(varMenu, dir, arrowPos, varMenu.options);
             //printf("%s",mainMenu.options[2].name);

@@ -16,7 +16,8 @@ struct Menu_page{
 menu_page page_init(const char* name, const menu_page* parent, const uint8_t size, const menu_page** options);
 void update_menu_page(menu_page page, enum joystick_direction dir,int position, menu_page** options);
 
-int cursor_counter(menu_page page, enum joystick_direction dir, int arrowPos);
+struct menu_page page_init(const char* name, const int* parent, const uint8_t size, const char* options[]);
+void update_menu_page(struct menu_page page, enum joystick_direction dir,int position);
 
 menu_page menu_initialize();
 
