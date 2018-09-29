@@ -19,12 +19,29 @@ menu_page page_init(const char* name, const menu_page* parent, const uint8_t siz
 
 menu_page menu_initialize(){
 
-   menu_page mainMenu;
-   menu_page StartNewGame = page_init("Start New Game", &mainMenu, 0, NULL);
+   menu_page mainMenu, StartNewGame, SetDifficulty, SeeResetHighscore;
+
+   menu_page Yes = page_init("Yes", &StartNewGame, 0, NULL);
+   menu_page No = page_init("No", &StartNewGame, 0, NULL);
+   menu_page startOpt[] = {&Yes, &No};
+   StartNewGame = page_init("Start New Game", &mainMenu, 2, startOpt);
+
    menu_page CalibrateJoystick = page_init("Calibrate Joystick", &mainMenu, 0, NULL);
-   menu_page SetDifficulty = page_init("Set Difficulty", &mainMenu, 0, NULL);
+
+   menu_page Easy = page_init("Easy", &SetDifficulty, 0, NULL);
+   menu_page Medium = page_init("Medium", &SetDifficulty, 0, NULL);
+   menu_page Hard = page_init("Hard", &SetDifficulty, 0, NULL);
+   menu_page difOpt[] = {&Easy, &Medium, &Hard};
+   SetDifficulty = page_init("Set Difficulty", &mainMenu, 3, difOpt);
+
+
    menu_page Debugging = page_init("Debug", &mainMenu, 0, NULL);
-   menu_page SeeResetHighscore = page_init("See/Reset Higscore", &mainMenu, 0, NULL);
+
+   menu_page See = page_init("See", &SeeResetHighscore, 0, NULL);
+   menu_page Reset = page_init("Reset", &SeeResetHighscore, 0, NULL);
+   menu_page seReOpt[] = {&See, &Reset};
+   SeeResetHighscore = page_init("See/Reset Higscore", &mainMenu, 2, seReOpt);
+
    menu_page mainOpt[] = {&StartNewGame, &SeeResetHighscore, &CalibrateJoystick, &SetDifficulty, &Debugging};
    //mainOpt[0] = &StartNewGame;
    //mainOpt[1] = &YIA;
@@ -34,38 +51,6 @@ menu_page menu_initialize(){
   mainMenu = page_init("Main Menu", NULL, 5, mainOpt);
   return mainMenu;
 }
-
-/*
-menu_page menu_initialize(){
-    menu_page StartNewGame, SeeResetHighscore, CalibrateJoystick, SetDifficulty, Debugging, Yes, No, See, Reset, Easy, Medium, Hard;
-    menu_page mainOptions[2];
-    //menu_page mainOptions[] = {StartNewGame, SeeResetHighscore, CalibrateJoystick, SetDifficulty, Debugging};
-    mainOptions[0] = StartNewGame;
-    mainOptions[1] = SeeResetHighscore;
-
-    menu_page mainMenu =  page_init("MAIN MENU", &mainMenu, 2, mainOptions);
-
-
-    menu_page sngOptions[2];
-    sngOptions[0] = Yes;
-    sngOptions[1] = No;
-    StartNewGame = page_init("Start New Game", &mainMenu, 2, sngOptions);
-
-    menu_page highScoreOptions[] = {See, Reset};
-    SeeResetHighscore = page_init("See/Reset Highscore", &mainMenu, 2, highScoreOptions);
-
-    menu_page JoystickOptions[] = {};
-    CalibrateJoystick = page_init("Calibrate Joystick", &mainMenu, 0, NULL);
-
-    menu_page DifficultyOptions[] = {Easy, Medium, Hard};
-    SetDifficulty = page_init("Set Difficulty", &mainMenu, 3, DifficultyOptions);
-
-    menu_page DebuggingOptions[] = {};
-    Debugging = page_init("Debugging", &mainMenu, 0, NULL);
-
-    return mainMenu;page
-
-}*/
 
 void OLED_print_arrow(uint8_t row, uint8_t col){
     oled_goto_pos(row, col);
