@@ -17,8 +17,8 @@
 #include "usbBoard.h"
 #include "oled.h"
 #include "menu.h"
-
-
+#include "SPI.h"
+#include "MCP2515.h"
 
 
 
@@ -26,9 +26,13 @@ int main(void){
     USART_init(MYUBRR);
     printf_init();
     extern_mem_init();
-    SRAM_test();
+    //SRAM_test();
     oled_init();
     oled_reset();
+/*
+
+
+    //SPI_read();
 
     menu_page mainMenu = menu_initialize();
 
@@ -39,21 +43,33 @@ int main(void){
     struct joystick_angle pos = calculate_angle();
     enum joystick_direction dir=get_joystick_direction(pos);
     int arrowPos = 0;
-    //update_menu_page(mainMenu, dir, arrowPos, mainMenu.options);
+    update_menu_page(mainMenu, dir, arrowPos, mainMenu.options);
 
-    menu_page varMenu = mainMenu;
+    menu_page varMenu = mainMenu;*/
+    SPI_init();
+    mcp2515_reset();
+    mcp2515_init();
+
+    mcp2515_write(0x36, 0x15);
+    uint8_t value = mcp2515_read(MCP_CANSTAT);
+    printf("%d\n\r", value);
+
+
 
     while(1){
-        pos = calculate_angle();
+
+
+
+        /*pos = calculate_angle();
         //printf("%s",mainMenu.ouint8_tptions[6].name);            oled_write_letter_sram('A', 8, 0, 0);
-        oled_init_sram();
+        //oled_init_sram();
         //oled_write_letter_sram('A', 8, 0, 0);
         //oled_write_letter_sram('A', 8, 0, 8);
 
         //oled_read_page_sram(0);
         oled_print_sram("YIA YIA",8,0,0);
         oled_print_sram(":))))) )", 8, 1, 0);
-        oled_print_sram("Herman er gay", 5, 7, 0);
+        oled_print_sram("Herman", 5, 7, 0);
         oled_read_screen_sram();
         //oled_read_page_sram(1);
 
@@ -65,9 +81,9 @@ int main(void){
             print_dir(dir);
             dir =  get_joystick_direction(pos);
 
-            //update_menu_page(varMenu, dir, arrowPos, varMenu.options);
-            //printf("%s",mainMenu.options[2].name);
-/*
+            update_menu_page(varMenu, dir, arrowPos, varMenu.options);
+            //printf("%s",mainMenu.opSRAM_testtions[2].name);
+
             if (dir == RIGHT && varMenu.options[arrowPos] != NULL){
                 oled_reset();
                 varMenu = *varMenu.options[arrowPos];
@@ -76,7 +92,7 @@ int main(void){
                 oled_reset();
                 varMenu = *varMenu.parent;
             }
-*/
+
 
         }
         _delay_ms(250);
@@ -84,7 +100,7 @@ int main(void){
       //write_d(0x00);
       //writed_d(0xFF);
       //write_c(0xA4);
-
+*/
     }
     return 0;
 }
