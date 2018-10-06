@@ -4,6 +4,7 @@
 #include "MCP2515.h"
 
 #define SS DDB4
+#define CONFIG_MODE 0x80
 
 uint8_t mcp2515_init(){
   uint8_t value;
@@ -13,29 +14,32 @@ uint8_t mcp2515_init(){
 
   // Test: check if MCP is in config mode
   value = mcp2515_read(MCP_CANSTAT);
-  if (value != 0x80){ // Check if CANSTAT shows config mode
+  if (value != CONFIG_MODE){ // Check if CANSTAT shows config mode
     printf("%s %d\n\r", "MCP NOT in config mode", value);
     return 1;
   }
+  printf("%s\r\n", "MCP in config mode");
 
   return 0;
 }
 
 uint8_t mcp2515_read(uint8_t address){
-  PORTB &= ~(1 << SS); // Select MCP
+  PORTB &= ~(1 << SS); // Select MCP (lowering CS_bar pin)
 
-  SPI_send(MCP_WRITE);
+  SPI_send(MCP_READ);
   SPI_send(address);
 
-  PORTB |= (1 << SS); // Deselect MCP
+  uint8_t value = SPI_read();
 
-  return SPI_read();
+  PORTB |= (1 << SS); // Deselect MCP (raising CS_bar pin)
+
+  return value;
 }
 
 void mcp2515_write(uint8_t address,uint8_t data){
   PORTB &= ~(1 << SS);
 
-  SPI_send(MCP_READ);
+  SPI_send(MCP_WRITE);
   SPI_send(address);
   SPI_send(data);
 

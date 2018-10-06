@@ -46,18 +46,19 @@ int main(void){
     update_menu_page(mainMenu, dir, arrowPos, mainMenu.options);
 
     menu_page varMenu = mainMenu;*/
-    SPI_init();
-    mcp2515_reset();
-    mcp2515_init();
+    if (mcp2515_init() == 1){
+      return 1;
+    }
 
-    mcp2515_write(0x36, 0x15);
-    uint8_t value = mcp2515_read(MCP_CANSTAT);
-    printf("%d\n\r", value);
+
 
 
 
     while(1){
-
+      mcp2515_write(0x36, 0x05);
+      uint8_t value = mcp2515_read(0x36);
+      printf("%d\r\n", value);
+      _delay_ms(100);
 
 
         /*pos = calculate_angle();

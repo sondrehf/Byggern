@@ -22,7 +22,6 @@ void SPI_init(){
 uint8_t SPI_read(){
   uint8_t dummyMessage = 0x00;
   SPDR = dummyMessage;
-   //printf("%s\n", "YIA");
 
   while (!(SPSR & (1<<SPIF)));
    // Wait for transmission to complete
@@ -31,7 +30,9 @@ uint8_t SPI_read(){
 }
 
 void SPI_send(uint8_t data){
+
   SPDR = data;
   while (!(SPSR & (1<<SPIF)));
     // Wait for transmission to complete
+
 }
