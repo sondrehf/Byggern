@@ -19,6 +19,7 @@
 #include "menu.h"
 #include "SPI.h"
 #include "MCP2515.h"
+#include "CAN.h"
 
 
 
@@ -29,6 +30,8 @@ int main(void){
     //SRAM_test();
     oled_init();
     oled_reset();
+    mcp2515_init();
+    can_init();
 /*
 
 
@@ -46,18 +49,26 @@ int main(void){
     update_menu_page(mainMenu, dir, arrowPos, mainMenu.options);
 
     menu_page varMenu = mainMenu;*/
-    if (mcp2515_init() == 1){
-      return 1;
-    }
+
+    can_message msg;
+    msg.id = 500;
+    msg.length=2;
+    msg.data[0] = (uint8_t)'U';
+    msg.data[1] = (uint8_t)'T';
+    printf("%s\n", "YIAAAA");
+    can_message_send(&msg);
+    printf("%s\n", "NEJJJJJJ");
+
+    can_message msg2;
+    msg2 = can_message_receive();
+    printf("%d, %d, %c, %c\n\r", msg2.id, msg2.length, (char)msg2.data[0], (char)msg2.data[1]);
 
 
-
-
-
+    //kan hende vi frya can transmit
     while(1){
-      mcp2515_write(0x36, 0x05);
+      mcp2515_write(0x36, 0x15);
       uint8_t value = mcp2515_read(0x36);
-      printf("%d\r\n", value);
+      //printf("%d\r\n", value);
       _delay_ms(100);
 
 

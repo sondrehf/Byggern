@@ -51,13 +51,13 @@ void mcp2515_request_to_send(uint8_t TXiRTS){
   PORTB &= ~(1 << SS);
 
   switch (TXiRTS) {
-    case 1:
+    case 0:
       SPI_send(MCP_RTS_TX0);
       break;
-    case 2:
+    case 1:
       SPI_send(MCP_RTS_TX1);
       break;
-    case 3:
+    case 2:
       SPI_send(MCP_RTS_TX2);
       break;
     default:
@@ -71,12 +71,13 @@ uint8_t mcp2515_read_status(){
   PORTB &= ~(1 << SS);
 
   SPI_send(MCP_READ_STATUS);
+  uint8_t value = SPI_read();
 
   PORTB |= (1 << SS);
 
-
-  return SPI_read();
+  return value;
 }
+
 /* NOT ALL REGISTERS CAN BE ACCESSED, SEE MAP IN DATASHEET */
 void mcp2515_bit_modify(uint8_t address, uint8_t maskByte, uint8_t dataByte){
   PORTB &= ~(1 << SS);
