@@ -11,6 +11,7 @@ struct Can_message{
 };
 
 void can_init();
+void can_set_normal_mode();
 uint8_t can_message_send(can_message* msg);
 can_message can_message_receive();
 uint8_t can_int_vect();

@@ -10,10 +10,13 @@ uint8_t mcp2515_init(){
   uint8_t value;
 
   SPI_init();
+
   mcp2515_reset();
+  mcp2515_write(MCP_CANCTRL, 0b10000000);
 
   // Test: check if MCP is in config mode
   value = mcp2515_read(MCP_CANSTAT);
+
   if (value != CONFIG_MODE){ // Check if CANSTAT shows config mode
     printf("%s %d\n\r", "MCP NOT in config mode", value);
     return 1;
@@ -25,9 +28,9 @@ uint8_t mcp2515_init(){
 
 uint8_t mcp2515_read(uint8_t address){
   PORTB &= ~(1 << SS); // Select MCP (lowering CS_bar pin)
-
   SPI_send(MCP_READ);
   SPI_send(address);
+
 
   uint8_t value = SPI_read();
 

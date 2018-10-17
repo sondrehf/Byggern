@@ -98,7 +98,7 @@ Copyright 2003 Kimberly Otten Software Consulting
 
 #define MCP_RX_STATUS	0xB0
 
-#define MCP_RESET		0xC0
+#define MCP_RESET		0xb11000000
 
 
 // CANCTRL Register Values

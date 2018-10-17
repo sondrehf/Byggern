@@ -18,31 +18,21 @@ int main(){
   USART_init(MYUBRR);
   mcp2515_init();
   can_init();
-  can_message msg;
-  msg.id = 69;
-  msg.length = 8;
-  msg.data[0] = (uint8_t)'H';
-  msg.data[1] = (uint8_t)'e';
-  msg.data[2] = (uint8_t)'r';
-  msg.data[3] = (uint8_t)'m';
-  msg.data[4] = (uint8_t)'E';
-  msg.data[5] = (uint8_t)'G';
-  msg.data[6] = (uint8_t)'a';
-  msg.data[7] = (uint8_t)'y';
-  can_message_send(&msg);
-  printf("%s\n", "QUE!?" );
-  can_message msg2;
-  msg2 = can_message_receive();
-  printf("%d, %d\n\r", msg2.id);//, msg2.length);
-  for (size_t i = 0; i < 8; i++) {
-    printf("%c ", (char)msg2.data[i]);
-  }
-
-
-
-
+  can_set_normal_mode();
   while(1){
     _delay_ms(50);
+    can_message msg;
+    msg.id = 69;
+    msg.length = 8;
+    msg.data[0] = (uint8_t)'H';
+    msg.data[1] = (uint8_t)'e';
+    msg.data[2] = (uint8_t)'r';
+    msg.data[3] = (uint8_t)'m';
+    msg.data[4] = (uint8_t)'E';
+    msg.data[5] = (uint8_t)'G';
+    msg.data[6] = (uint8_t)'a';
+    msg.data[7] = (uint8_t)'y';
+    can_message_send(&msg);
     //SPI_send(0b10011101);
     //SPI_read();
 

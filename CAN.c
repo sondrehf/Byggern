@@ -21,6 +21,15 @@ void can_init(){
   mcp2515_write(MCP_TXB0CTRL, 0);
   mcp2515_write(MCP_TXB1CTRL, 0);
   mcp2515_write(MCP_TXB2CTRL, 0);
+
+  //Setting some registers:)
+  mcp2515_write(MCP_CNF1, 0x03);
+  mcp2515_write(MCP_CNF2, 0x9a);
+  mcp2515_write(MCP_CNF3, 0x07);
+}
+
+void can_set_normal_mode(){
+  mcp2515_write(MCP_CANCTRL, MODE_NORMAL);
 }
 
 uint8_t can_message_send(can_message* msg){

@@ -14,5 +14,6 @@ void can_init();
 uint8_t can_message_send(can_message* msg);
 can_message can_message_receive();
 uint8_t can_int_vect();
+void can_set_normal_mode();
 
 #endif

@@ -23,6 +23,10 @@ void can_init(){
   mcp2515_write(MCP_TXB2CTRL, 0);
 }
 
+void can_set_normal_mode(){
+  mcp2515_write(MCP_CANCTRL, MODE_NORMAL);
+}
+
 uint8_t can_message_send(can_message* msg){
   if (mcp2515_read_status() & 0b00001000) {return 1;} //Checking to see if the controller is currently transmitting (TXREQ is high)
 
