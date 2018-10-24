@@ -14,12 +14,16 @@ uint8_t mcp2515_init(){
   SPI_init();
   mcp2515_reset();
 
-  mcp2515_write(MCP_CANCTRL, 0b10000000);
   // Test: check if MCP is in config mode
   value = mcp2515_read(MCP_CANSTAT);
+  while(value!=CONFIG_MODE){
+    printf("%s\n","Loading..." );
+    value = mcp2515_read(MCP_CANSTAT);  //Waiting for config mode to be ready
+    _delay_ms(1);
+  }
 
 
-  if (value != CONFIG_MODE){ // Check if CANSTAT shows config mode
+  if(value != CONFIG_MODE){ // Check if CANSTAT shows config mode
     printf("%s %x\n\r", "MCP NOT in config mode", value);
     return 1;
   }

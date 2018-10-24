@@ -30,9 +30,23 @@ int main(void){
     //SRAM_test();
     oled_init();
     oled_reset();
+    //mcp2515_reset();
     mcp2515_init();
     can_init();
     can_set_normal_mode();
+
+    can_message msg;
+    msg.id = 69;
+    msg.length = 8;
+    msg.data[0] = (uint8_t)'H';
+    msg.data[1] = (uint8_t)'e';
+    msg.data[2] = (uint8_t)'r';
+    msg.data[3] = (uint8_t)'m';
+    msg.data[4] = (uint8_t)'E';
+    msg.data[5] = (uint8_t)'G';
+    msg.data[6] = (uint8_t)'a';
+    msg.data[7] = (uint8_t)'y';
+    can_message_send(&msg);
 /*
     //SPI_read();
     menu_page mainMenu = menu_initialize();
@@ -44,21 +58,43 @@ int main(void){
     update_menu_page(mainMenu, dir, arrowPos, mainMenu.options);
     menu_page varMenu = mainMenu;*/
 
-    can_message msg2;
-    msg2 = can_message_receive();
-    printf("%d, %x\n\r", msg2.id, msg2.length);
-    for (size_t i = 0; i < msg2.length; i++) {
-      printf("%c ", (char)msg2.data[i]);
-    }
-
 
     //kan hende vi frya can transmit
     while(1){
+      _delay_ms(150);
+
+      if((mcp2515_read(MCP_CANINTF) & 0b00000100)) { //Checking to see if the controller is currently transmitting (TXREQ is high)
+
+        joystick_can_send();
+      /*  msg.data[2] = (uint8_t)'r';
+        msg.data[3] = (uint8_t)'m';
+        msg.data[4] = (uint8_t)'E';
+        msg.data[5] = (uint8_t)'G';
+        msg.data[6] = (uint8_t)'a';
+        msg.data[7] = (uint8_t)'y';*/
+        //can_message_send(&msg);
+      }
       //mcp2515_write(0x36, 0x15);
       //uint8_t value = mcp2515_read(0x36);
       //printf("%d\r\n", value);
-      _delay_ms(100);
 
+      printf("%s","CANSTAT: " );
+      printf("%x\n\r",mcp2515_read(MCP_CANSTAT));
+      printf("%s","CANINTF: " );
+      printf("%x\n\r",mcp2515_read(MCP_CANINTF));
+      printf("%s","EFLG: " );
+      printf("%x\n\r\n\r",mcp2515_read(MCP_EFLG));
+        /*can_message msg2;
+        msg2 = can_message_receive();
+        printf("%d, %x\n\r", msg2.id, msg2.length);
+        for (size_t i = 0; i < msg2.length; i++) {
+          printf("%c ", (char)msg2.data[i]);
+        }
+        printf("%s","CANSTAT: " );
+        printf("%x\n\r",mcp2515_read(MCP_CANSTAT));
+        printf("%s","CANINTF: " );
+        printf("%x\n\r",mcp2515_read(MCP_CANINTF));
+*/
 
         /*pos = calculate_angle();
         //printf("%s",mainMenu.ouint8_tptions[6].name);            oled_write_letter_sram('A', 8, 0, 0);

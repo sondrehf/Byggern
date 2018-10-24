@@ -1,5 +1,6 @@
 #include "usbBoard.h"
 #include "adc.h"
+#include "CAN.h"
 
 
 uint8_t get_y_raw_value(){
@@ -87,6 +88,15 @@ void print_dir(enum joystick_direction dir){
   default:
     break;
 }
+}
+
+void joystick_can_send(){
+  can_message msg;
+  msg.id = 0;
+  msg.length = 2;
+  msg.data[0] = get_x_raw_value();
+  msg.data[1] = get_y_raw_value();
+  can_message_send(&msg);
 }
 /*
 struct joystick_angle pos = calculate_angle();

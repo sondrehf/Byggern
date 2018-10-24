@@ -21,6 +21,11 @@ void can_init(){
   mcp2515_write(MCP_TXB0CTRL, 0);
   mcp2515_write(MCP_TXB1CTRL, 0);
   mcp2515_write(MCP_TXB2CTRL, 0);
+
+  //Setting some registers for length and baud rate
+  mcp2515_write(MCP_CNF1, 0x03);
+  mcp2515_write(MCP_CNF2, 0x9a);
+  mcp2515_write(MCP_CNF3, 0x07);
 }
 
 void can_set_normal_mode(){
@@ -28,8 +33,8 @@ void can_set_normal_mode(){
 }
 
 uint8_t can_message_send(can_message* msg){
-  if (mcp2515_read_status() & 0b00001000) {return 1;} //Checking to see if the controller is currently transmitting (TXREQ is high)
-
+  //if (!(mcp2515_read(MCP_CANINTF) & 0b00000100)) {return 1;} //Checking to see if the controller is currently transmitting (TXREQ is high)
+  mcp2515_bit_modify(MCP_CANINTF, 0b00000100, 0b00000000); //Resetting flag of TX0IF
   //Splitting id into higher and lower MSBs/LSBs
   unsigned id_high = msg->id & 0b11111111000;
   unsigned id_low = msg->id & 0b00000000111;
@@ -48,13 +53,13 @@ uint8_t can_message_send(can_message* msg){
 
   //Setting TX0RTS low to initiate transmission
   mcp2515_request_to_send(0);
-  while(!(mcp2515_read_status() & 0b00000100)); // Checking the interrupt flag of TF0IF
+  while(!(mcp2515_read(MCP_CANINTF) & 0b00000100)); // Checking the interrupt flag of TX0IF
   return 0;
 }
 
 can_message can_message_receive(){
   can_message msg;
-  if (mcp2515_read_status() & 0x01){ //Checking to see if CAN is ready for a new message (RX0IF is high)
+  //if ((mcp2515_read(MCP_CANINTF) & 0x01)){ //Checking to see if CAN is ready for a new message (RX0IF is high)
 
     //Reading the identity
     msg.id = mcp2515_read(MCP_RXB0SIDH); //reading 8 highest bits
@@ -71,16 +76,15 @@ can_message can_message_receive(){
     }
 
     //Resetting interrupt bit
-    uint8_t tempStatus = mcp2515_read_status();
-    mcp2515_write(MCP_CANINTF, tempStatus & 0b11111110);
+    mcp2515_bit_modify(MCP_CANINTF, 0b00000001, 0); //Resetter RX0IF
     return msg;
-  }
-  msg.id = 0;
+  /*}
+  msg.id = 88;
   msg.length = -1;
   for(uint8_t i = 0; i < 8; i++){
     msg.data[i] = 0;
   }
-  return msg;
+  return msg;*/
 }
 
 //Interrupt handling, up to ATMEGA to decide what to do with the interrupt

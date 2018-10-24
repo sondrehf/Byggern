@@ -19,20 +19,37 @@ int main(){
   mcp2515_init();
   can_init();
   can_set_normal_mode();
+
+
+  //kan hende vi frya can transmit
   while(1){
-    _delay_ms(50);
-    can_message msg;
-    msg.id = 69;
-    msg.length = 8;
-    msg.data[0] = (uint8_t)'H';
-    msg.data[1] = (uint8_t)'e';
-    msg.data[2] = (uint8_t)'r';
-    msg.data[3] = (uint8_t)'m';
-    msg.data[4] = (uint8_t)'E';
-    msg.data[5] = (uint8_t)'G';
-    msg.data[6] = (uint8_t)'a';
-    msg.data[7] = (uint8_t)'y';
-    can_message_send(&msg);
+    _delay_ms(150);
+    //Check if RX0IF is high, thus ready to receive new message
+    if ((mcp2515_read(MCP_CANINTF) & 0b00000001)) {
+      can_message msg2;
+      msg2 = can_message_receive();
+      printf("%d, %x\n\r", msg2.id, msg2.length);
+      printf("%d, %d\n", msg2.data[0], msg2.data[1]);
+    }
+    _delay_ms(500);
+
+
+    //mcp2515_write(0x36, 0x15);
+    //uint8_t value = mcp2515_read(0x36);
+    //printf("%d\r\n", value);
+
+    printf("%s","CANSTAT: " );
+    printf("%x\n\r",mcp2515_read(MCP_CANSTAT));
+    printf("%s","CANINTF: " );
+    printf("%x\n\r",mcp2515_read(MCP_CANINTF));
+    printf("%s","EFLG: " );
+    printf("%x\n\r\n\r",mcp2515_read(MCP_EFLG));
+/*
+    can_message rcd;
+    rcd = can_message_receive();
+    for(int i = 0; i<rcd.length; i++){
+      printf("%c\n", rcd.data[i] );
+    }   */
     //SPI_send(0b10011101);
     //SPI_read();
 
