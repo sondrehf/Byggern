@@ -69,6 +69,7 @@ Copyright 2003 Kimberly Otten Software Consulting
 #define MCP_TX_INT		0x1C		// Enable all transmit interrupts
 #define MCP_TX01_INT	0x0C		// Enable TXB0 and TXB1 interrupts
 #define MCP_RX_INT		0x03		// Enable receive interrupts
+#define MCP_RX0_INT   0x01    //Enable RX0 receive interrupts
 #define MCP_NO_INT		0x00		// Disable all interrupts
 
 #define MCP_TX01_MASK	0x14

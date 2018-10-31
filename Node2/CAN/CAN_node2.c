@@ -12,30 +12,32 @@
 #define MCP_RXB0SIDL 0x62
 
 void can_init(){
-  mcp2515_write(MCP_CANCTRL, MODE_LOOPBACK);
 
-  mcp2515_write(MCP_CANINTE, MCP_TX_INT); //Enable all interrupts from transmit buffers
-  mcp2515_write(MCP_CANINTE, MCP_RX_INT); //Enable all interrupts from receive buffers
-
+  mcp2515_write(MCP_CANINTE, MCP_RX0_INT);  //Enable only interrupts from receive buffer 0
   //Setting the TXBxCTRL to zero, ready to send msg
   mcp2515_write(MCP_TXB0CTRL, 0);
   mcp2515_write(MCP_TXB1CTRL, 0);
   mcp2515_write(MCP_TXB2CTRL, 0);
+  //Accept all messages from acceptance filters.
+  mcp2515_write(MCP_RXB0CTRL, 0x60);
+  //Setting interrupts as zero standard.
+  mcp2515_write(MCP_CANINTF, 0);
 
   //Setting some registers for length and baud rate
   mcp2515_write(MCP_CNF1, 0x03);
   mcp2515_write(MCP_CNF2, 0x9a);
   mcp2515_write(MCP_CNF3, 0x07);
+  mcp2515_bit_modify(MCP_CANCTRL, MODE_MASK, MODE_LOOPBACK);
+
 }
 
 void can_set_normal_mode(){
-  mcp2515_write(MCP_CANCTRL, MODE_NORMAL);
+  mcp2515_bit_modify(MCP_CANCTRL, MODE_MASK, MODE_NORMAL);
 }
 
 uint8_t can_message_send(can_message* msg){
-  //if (!(mcp2515_read(MCP_CANINTF) & 0b00000100)) {return 1;} //Checking to see if the controller is currently transmitting (TXREQ is high)
-  mcp2515_bit_modify(MCP_CANINTF, 0b00000100, 0b00000000); //Resetting flag of TX0IF
   //Splitting id into higher and lower MSBs/LSBs
+
   unsigned id_high = msg->id & 0b11111111000;
   unsigned id_low = msg->id & 0b00000000111;
   id_low = id_low << 5;
@@ -53,9 +55,14 @@ uint8_t can_message_send(can_message* msg){
 
   //Setting TX0RTS low to initiate transmission
   mcp2515_request_to_send(0);
-  while(!(mcp2515_read(MCP_CANINTF) & 0b00000100)); // Checking the interrupt flag of TX0IF
+  //printf("Help me, im stuck\n");
+  //Checking if TX0REQ buffer is cleared(message is sent)
+  //printf("jk\n" );
+  while((mcp2515_read_status() & 0b00000100));
+
   return 0;
 }
+
 
 can_message can_message_receive(){
   can_message msg;

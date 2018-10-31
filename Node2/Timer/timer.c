@@ -39,7 +39,6 @@ void timer_init(){
 }
 
 void timer_joystick(){
-    _delay_ms(500);
     joystick_can_send();
     can_message msg;
     if ((mcp2515_read(MCP_CANINTF) & 0b00000001)) {

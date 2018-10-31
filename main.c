@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <util/delay.h>           // for _delay_ms()
 #include <avr/io.h>
+#include <avr/interrupt.h>
 #include <avr/pgmspace.h>
 #include "uart.h"
 #include "latch.h"
@@ -21,32 +22,38 @@
 #include "MCP2515.h"
 #include "CAN.h"
 
+volatile static can_message msg;
+
 
 
 int main(void){
+
+
+
+    _delay_ms(1000);
     USART_init(MYUBRR);
     printf_init();
     extern_mem_init();
-    //SRAM_test();
     oled_init();
     oled_reset();
-    //mcp2515_reset();
     mcp2515_init();
     can_init();
     can_set_normal_mode();
 
-    can_message msg;
-    msg.id = 69;
-    msg.length = 8;
-    msg.data[0] = (uint8_t)'H';
-    msg.data[1] = (uint8_t)'e';
-    msg.data[2] = (uint8_t)'r';
-    msg.data[3] = (uint8_t)'m';
-    msg.data[4] = (uint8_t)'E';
-    msg.data[5] = (uint8_t)'G';
-    msg.data[6] = (uint8_t)'a';
-    msg.data[7] = (uint8_t)'y';
-    can_message_send(&msg);
+    /* INTERRUPT ENABLE */
+    // Button input
+
+    DDRE &= ~(1<<PE0);
+    // Disable global interrupts
+    cli();
+    // Interrupt on falling edge PE0
+    EMCUCR &= ~(1<<ISC2);
+    // Enable interrupt on PE0
+    GICR |= (1<<INT2);
+
+    // Enable global interrupts
+    sei();
+    /*INTERRUPT ENABLE FINISHED*/
 /*
     //SPI_read();
     menu_page mainMenu = menu_initialize();
@@ -58,14 +65,20 @@ int main(void){
     update_menu_page(mainMenu, dir, arrowPos, mainMenu.options);
     menu_page varMenu = mainMenu;*/
 
-
-    //kan hende vi frya can transmit
     while(1){
-      _delay_ms(150);
-
-      if((mcp2515_read(MCP_CANINTF) & 0b00000100)) { //Checking to see if the controller is currently transmitting (TXREQ is high)
-
-        joystick_can_send();
+      _delay_ms(100);
+/*      msg.id = 69;
+      msg.length = 8;
+      msg.data[0] = (uint8_t)'Y';
+      msg.data[1] = (uint8_t)'o';
+      msg.data[2] = (uint8_t)'M';
+      msg.data[3] = (uint8_t)'o';
+      msg.data[4] = (uint8_t)'m';
+      msg.data[5] = (uint8_t)'G';
+      msg.data[6] = (uint8_t)'a';
+      msg.data[7] = (uint8_t)'y';
+      can_message_send(&msg);*/
+      joystick_can_send();
       /*  msg.data[2] = (uint8_t)'r';
         msg.data[3] = (uint8_t)'m';
         msg.data[4] = (uint8_t)'E';
@@ -73,17 +86,17 @@ int main(void){
         msg.data[6] = (uint8_t)'a';
         msg.data[7] = (uint8_t)'y';*/
         //can_message_send(&msg);
-      }
       //mcp2515_write(0x36, 0x15);
       //uint8_t value = mcp2515_read(0x36);
       //printf("%d\r\n", value);
 
-      printf("%s","CANSTAT: " );
+            /*  printf("%s","CANSTAT: " );
       printf("%x\n\r",mcp2515_read(MCP_CANSTAT));
       printf("%s","CANINTF: " );
       printf("%x\n\r",mcp2515_read(MCP_CANINTF));
       printf("%s","EFLG: " );
-      printf("%x\n\r\n\r",mcp2515_read(MCP_EFLG));
+      printf("%x\n\r\n\r",mcp2515_read(MCP_EFLG));*/
+
         /*can_message msg2;
         msg2 = can_message_receive();
         printf("%d, %x\n\r", msg2.id, msg2.length);
@@ -110,14 +123,25 @@ int main(void){
         if (get_joystick_direction(pos) != dir){
             arrowPos = cursor_counter(varMenu, dir, arrowPos);
             printf("%d\n", arrowPos );
-            print_dir(dir);
+            print_int8_t interrupt = mcp2515_read(MCP_CANINTF);
+  uint8_t RX0_flag = interrupt & 0b00000001;
+  printf("%s\n","Hei der, general Kenobi" );
+  //check to see if received data.
+  if (RX0_flag){
+    msg = can_message_receive();
+    printf("%d, %x\n\r", msg.id, msg.length);
+    printf("%c, %c\n", msg.data[0], msg.data[1]);
+
+  }
+  /*dir(dir);
             dir =  get_joystick_direction(pos);
             update_menu_page(varMenu, dir, arrowPos, varMenu.options);
             //printf("%s",mainMenu.opSRAM_testtions[2].name);
             if (dir == RIGHT && varMenu.options[arrowPos] != NULL){
                 oled_reset();
                 varMenu = *varMenu.options[arrowPos];
-            }
+            }      mcp2515_bit_modify(MCP_CANINTF, 0b00000001, 0); //Resetter RX0IF
+
             if (dir == LEFT && varMenu.parent != NULL){
                 oled_reset();
                 varMenu = *varMenu.parent;
@@ -130,4 +154,17 @@ int main(void){
 */
   }
     return 0;
+}
+
+ISR(INT2_vect){
+  uint8_t interrupt = mcp2515_read(MCP_CANINTF);
+  uint8_t RX0_flag = interrupt & 0b00000001;
+  //check to see if received data.
+  if (RX0_flag){
+    msg = can_message_receive();
+    printf("%d, %x\n\r", msg.id, msg.length);
+    for (size_t i = 0; i < msg.length; i++) {
+      printf("%c ", (char)msg.data[i]);
+    }
+  }
 }

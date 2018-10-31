@@ -13,12 +13,19 @@ uint8_t mcp2515_init(){
 
   SPI_init();
   mcp2515_reset();
+  _delay_ms(10);
+
+  mcp2515_bit_modify(MCP_CANCTRL, MODE_MASK, CONFIG_MODE);
+  _delay_ms(10);
+
+
 
   // Test: check if MCP is in config mode
-  value = mcp2515_read(MCP_CANSTAT);
+  value = mcp2515_read(MCP_CANSTAT) & MODE_MASK;
   while(value!=CONFIG_MODE){
     printf("%s\n","Loading..." );
     value = mcp2515_read(MCP_CANSTAT);  //Waiting for config mode to be ready
+    mcp2515_bit_modify(MCP_CANCTRL, MODE_MASK, CONFIG_MODE);
     _delay_ms(1);
   }
 
