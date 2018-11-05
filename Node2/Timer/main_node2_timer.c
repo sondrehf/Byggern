@@ -16,13 +16,13 @@
 #include "../Utilities/MCP2515_node2.h"
 
 
+
 int main(void){
   USART_init(MYUBRR);
   mcp2515_init();
   can_init();
   can_set_normal_mode();
   timer_init();
-
     /* INTERRUPT ENABLE */
     // Button input
     DDRB &= ~(1<<PB6);
@@ -45,8 +45,7 @@ ISR(PCINT0_vect){
   uint8_t RX0_flag = interrupt & 0b00000001;
   //check to see if received data.
   if (RX0_flag){
-    //msg = can_message_receive();
-    timer_joystick();
+    timer_joystick(can_message_receive());
 
     //printf("%d, %x\n\r", msg.id, msg.length);
     //printf("%d, %d\n\r", msg.data[0],msg.data[1]);

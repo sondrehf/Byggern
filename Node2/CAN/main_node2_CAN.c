@@ -41,8 +41,10 @@ int main(){
   sei();
 
 
-  //kan hende vi frya can transmit
   while(1){
+    printf("%d, %x\n\r", msg.id, msg.length);
+    printf("%d, %d\n\r", msg.data[0],msg.data[1]);
+
     /*_delay_ms(100);
     msg.id = 79;
     msg.length = 4;
@@ -101,10 +103,6 @@ ISR(PCINT0_vect){
   //check to see if received data.
   if (RX0_flag){
     msg = can_message_receive();
-    //printf("%d, %x\n\r", msg.id, msg.length);
-    //printf("%d, %d\n\r", msg.data[0],msg.data[1]);
-    /*for (size_t i = 0; i < msg.length; i++) {
-      printf("%c ", (char)msg.data[i]);
-    }*/
+
   }
 }

@@ -162,9 +162,6 @@ ISR(INT2_vect){
   //check to see if received data.
   if (RX0_flag){
     msg = can_message_receive();
-    printf("%d, %x\n\r", msg.id, msg.length);
-    for (size_t i = 0; i < msg.length; i++) {
-      printf("%c ", (char)msg.data[i]);
-    }
+
   }
 }

@@ -1,2 +1,2 @@
 void timer_init();
-void timer_joystick();
+void joystick_to_PWM(can_message);
