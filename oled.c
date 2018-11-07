@@ -1,6 +1,7 @@
 #include <util/delay.h>           // for _delay_ms()
 #include <avr/io.h>
 #include <avr/pgmspace.h>
+#include <avr/interrupt.h>
 #include "oled.h"
 #include "fonts.h"
 
@@ -216,3 +217,25 @@ void oled_print_sram(const char* data, uint8_t fontSize, uint8_t line, uint8_t c
   }
 }
 /* END OF SRAM USE HERE */
+
+/* --------------------Timer interrupt ----------------------------------*/
+// Uses the 16-bit module 1
+void timer_interrupt_for_oled_init(){
+  //Setting Timer/counter module 1 in Clear timer on Compare match mode (CTC).
+  TCCR1B |= (1<<WGM12);
+  //Clock prescaling, N = 8
+  TCCR1B |= (1<<CS11);
+  // Default value for duty cycle, 60Hz
+  OCR1AH = 0x13;
+  OCR1AL = 0xFF;
+  // Clear counter
+  TCNT1H = 0;
+  TCNT1L = 0;
+  //Enable interrupt out of port OCIE1A
+  TIMSK |= (1<<OCIE1A);
+}
+
+ISR(TIMER1_COMPA_vect){
+  printf("%s\n\r", "YIA");
+  printf("%s\n\r", "SSKKKKKKKKKKRT!!!! >:(");
+}

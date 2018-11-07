@@ -1,10 +1,15 @@
+#ifndef F_CPU
+#define F_CPU 16000000
+#endif
 #include "timer.h"
 #include <stdio.h>
 #include "../CAN/CAN_node2.h"
 #include "../../usbBoard.h"
 #include "../Utilities/MCP2515_node2.h"
 #include <avr/io.h>
-void timer_init(){
+#include <avr/interrupt.h>
+#include "../Motor/motor.h"
+void timer_pwm_init(){
   //Set OC1A to output
   DDRB |= (1<<PB5);
 
@@ -22,8 +27,6 @@ void timer_init(){
   //N = fclk/(fout*(1+TOP))
   ICR1H = 0x9C;
   ICR1L = 0x3F;
-
-
 
 // Default value for duty cycle
   OCR1AH = 0x0B;
@@ -57,7 +60,21 @@ void joystick_to_PWM(can_message msg){
     } else {
       OCR1AH = tempVal >> 8;
       OCR1AL = tempVal & 0xFF;
-      printf("%x, %x\n", OCR1AH,OCR1AL);
 
     }
+}
+
+void timer_interrupt_for_controller_init(){
+  //Setting Timer/counter module 3 in Clear timer on compare match mode.
+  TCCR3B |= (1<<WGM32);
+  //Clock prescaling, N = 8
+  TCCR3B |= (1<<CS31);
+  // Default value for frequency, 50Hz
+  OCR3AH = 0x4E;
+  OCR3AL = 0x1F;
+  // Clear counter
+  TCNT3H = 0;
+  TCNT3L = 0;
+  //Enable interrupt out of port OCIE3A
+  TIMSK3 |= (1<<OCIE3A);
 }

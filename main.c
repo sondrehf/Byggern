@@ -40,6 +40,7 @@ int main(void){
     can_init();
     can_set_normal_mode();
 
+
     /* INTERRUPT ENABLE */
     // Button input
 
@@ -78,7 +79,7 @@ int main(void){
       msg.data[6] = (uint8_t)'a';
       msg.data[7] = (uint8_t)'y';
       can_message_send(&msg);*/
-      joystick_can_send();
+      motor_input_can_send();
       /*  msg.data[2] = (uint8_t)'r';
         msg.data[3] = (uint8_t)'m';
         msg.data[4] = (uint8_t)'E';
@@ -155,6 +156,7 @@ int main(void){
   }
     return 0;
 }
+
 
 ISR(INT2_vect){
   uint8_t interrupt = mcp2515_read(MCP_CANINTF);

@@ -1,7 +1,14 @@
 #include <avr/io.h>
 #include <stdio.h>
+#include <avr/interrupt.h>
 #include "MCP2515.h"
 #include "CAN.h"
+
+#ifndef F_CPU
+#define F_CPU 4915200
+#endif
+
+#define FOSC 4915200// Clock Speed
 
 #define MCP_TXB0SIDH 0x31
 #define MCP_TXB0SIDL 0x32
@@ -90,4 +97,26 @@ can_message can_message_receive(){
 //If different to zero an interrupt has occured
 uint8_t can_int_vect(){
   return mcp2515_read(MCP_CANINTF);
+}
+
+/* --------------------Timer interrupt ----------------------------------*/
+// Uses the 16-bit module 3 (module 2 does not exist)
+void timer_interrupt_for_can_init(){
+  //Setting Timer/counter module 3 in Clear timer on Compare match mode (CTC).
+  TCCR3B |= (1<<WGM32);
+  //Clock prescaling, N = 8
+  TCCR3B |= (1<<CS31);
+  // Default value for duty cycle, 60Hz
+  OCR3AH = 0x13;
+  OCR3AL = 0xFF;
+  // Clear counter
+  TCNT3H = 0;
+  TCNT3L = 0;
+  //Enable interrupt out of port OCIE3A
+  ETIMSK |= (1<<OCIE3A);
+}
+
+ISR(TIMER3_COMPA_vect){
+  printf("%s\n\r", "Halla");
+  printf("%s\n", "PAT");
 }

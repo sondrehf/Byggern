@@ -25,25 +25,27 @@ int main(void){
   mcp2515_init();
   can_init();
   can_set_normal_mode();
-  timer_init();
+  timer_pwm_init();
+  timer_interrupt_for_controller_init();
   TWI_Master_Initialise();
   motor_initialize();
   /* INTERRUPT ENABLE */
-  // Button input
+  // Pin input
   DDRB &= ~(1<<PB6);
   // Disable global interrupts
   cli();
   //Enable pin change interrupt on pin : PCINT 0:7
   PCICR |= (1<<PCIE0);
-  //Setting PCINT5 interrupt
+  //Setting PCINT6 interrupt
   PCMSK0 |= (1<<PCINT6);
-
   //Enable global interrupts
   sei();
 
   //start condition for output
-  msg.data[1] = 0;
+  msg.data[1] = 128;
   while(1){
+    //printf("%d\n", msg.data[1] );
+    read_encoder();
     TWI_motor_control(msg);
     joystick_to_PWM(msg);
   }
@@ -55,5 +57,6 @@ ISR(PCINT0_vect){
   //check to see if received data.
   if (RX0_flag){
     msg = can_message_receive();
+
   }
 }

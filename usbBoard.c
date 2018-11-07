@@ -47,9 +47,12 @@ enum joystick_direction get_joystick_direction(struct joystick_angle angle){
   return ERROR;
 }
 
+//Function for retrieval of left slider position
 uint8_t get_left_value(){
   return get_channel_value(2);
 }
+
+//Right slider position
 uint8_t get_right_value(){
   return get_channel_value(3);
 }
@@ -90,14 +93,20 @@ void print_dir(enum joystick_direction dir){
 }
 }
 
-void joystick_can_send(){
+void motor_input_can_send(){
   can_message msg;
   msg.id = 0;
   msg.length = 2;
+  //Joystick x position fetch
   msg.data[0] = get_x_raw_value();
-  msg.data[1] = get_y_raw_value();
+  //Fetch right slider position
+  msg.data[1] = get_right_value();
+  //Button
+  //msg.data[2] = get_button();
   can_message_send(&msg);
 }
+
+
 /*
 struct joystick_angle pos = calculate_angle();
 struct slider_pos slider = calculate_slider();
@@ -125,6 +134,8 @@ switch (dir) {
     break;
   default:
     break;
+}uint8_t get_right_value(){
+  return get_channel_value(3);
 }
 
 printf("Left: %d, Right: %d \n\r", slider.leftPercent, slider.rightPercent);
