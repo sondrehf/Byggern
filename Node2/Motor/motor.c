@@ -28,21 +28,20 @@ void motor_initialize(){
   PORTH = (1<<EN);
 }
 
-void TWI_motor_control(can_message msg){
+void TWI_motor_control(can_message msg, uint8_t input, uint8_t* dir){
   unsigned char msg_array[3];
   msg_array[0] = 0x50; //Address is zero, and the write bit is LSB.
   msg_array[1] = 0; //Deciding which output that transmits from DAC.
-  if (msg.data[1] > 140){
+  if (*dir == 1){
     PORTH |= (1<<DIR);
-    msg_array[2] = msg.data[1];
-  }
-  else if (msg.data[1] < 115){
-    msg_array[2] = 255 - msg.data[1];
-    PORTH &= ~(1<<DIR);
+    msg_array[2] = input;
   }
   else{
-    msg_array[2] = 0;
+    msg_array[2] = input;
+    PORTH &= ~(1<<DIR);
   }
+  //else{
+  
 
   TWI_Start_Transceiver_With_Data(msg_array, 3);
 }
@@ -68,6 +67,19 @@ int read_encoder(){
   totalValue = (highValue << 8)+lowValue;
   return totalValue;
 }
+
+void initial_position(){
+  //Drive a certain dir
+  PORTH &= ~(1<<DIR);
+  unsigned char msg_array[3] = {0x50,0,130};
+  TWI_Start_Transceiver_With_Data(msg_array,3);
+  _delay_ms(3000);
+  //reset encoder again
+  PORTH &= ~(1<<RST);
+  _delay_us(20);
+  PORTH |= (1<<RST);
+}
+
 /* --------POSITION CONTROLLER ------------*/
 //TOTAL AMOUNT OF ROTATIONS FROM LEFT TO RIGHT 8730
 //int error_calc()
@@ -78,6 +90,6 @@ uint8_t motor_controller_PD(uint8_t r){
 
 }
 ISR(TIMER3_COMPA_vect){
-  encoderValue = read_encoder();
-  printf("%d\n",encoderValue );
+  //encoderValue = read_encoder();
+  //printf("%d\n",encoderValue );
 }

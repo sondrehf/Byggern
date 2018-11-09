@@ -1,5 +1,5 @@
 # List all source files to be compiled; separate with space
-SOURCE_FILES := main_node2_motor.c motor.c ../Node2/Utilities/MCP2515_node2.c ../Node2/CAN/CAN_node2.c ../../usbBoard.c ../Node2/Utilities/SPI_node2.c ../../adc.c ../Node2/USART/USART.c ../Node2/Timer/timer.c ../Node2/Utilities/TWI_Master.c
+SOURCE_FILES := main_node2_motor.c motor.c ../Node2/Utilities/MCP2515_node2.c ../Node2/CAN/CAN_node2.c ../../usbBoard.c ../Node2/Utilities/SPI_node2.c ../../adc.c ../Node2/USART/USART.c ../Node2/Timer/timer.c ../Node2/Utilities/TWI_Master.c ../Node2/Regulator/regulator.c
 
 
 # Set this flag to "yes" (no quotes) to use JTAG; otherwise ISP (SPI) is used

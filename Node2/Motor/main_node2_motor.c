@@ -17,6 +17,7 @@
 #include "motor.h"
 #include "../Utilities/TWI_Master.h"
 #include "../CAN/CAN_node2.h"
+#include "../Regulator/regulator.h"
 
 volatile static can_message msg;
 
@@ -29,6 +30,11 @@ int main(void){
   timer_interrupt_for_controller_init();
   TWI_Master_Initialise();
   motor_initialize();
+  //Initialize regulator
+  regulator_data reg;
+  regulator_init(1.2, 1, 0, &reg);
+
+
   /* INTERRUPT ENABLE */
   // Pin input
   DDRB &= ~(1<<PB6);
@@ -40,14 +46,35 @@ int main(void){
   PCMSK0 |= (1<<PCINT6);
   //Enable global interrupts
   sei();
-
+  initial_position();
   //start condition for output
   msg.data[1] = 128;
+
+
+  int absolutePositionRotation = 0;
+  uint8_t absolutePosition = 0;
+  double ratio = 255.0/8900;
+  uint8_t input = 0;
+  uint8_t* dir = 1;
   while(1){
+    //printf("%s\n\r", "heider");
     //printf("%d\n", msg.data[1] );
-    read_encoder();
-    TWI_motor_control(msg);
-    joystick_to_PWM(msg);
+    absolutePositionRotation += read_encoder(); 
+    absolutePosition = absolutePositionRotation * ratio;
+
+    //printf("%s%d\r\n", "rotation ", absolutePositionRotation);
+    printf("%s%d\r\n", "pos ", absolutePosition);
+
+    input = regulator(&dir, 128, absolutePosition, &reg);
+
+
+    //printf("%d\n\r", input);
+    TWI_motor_control(msg, input, &dir);
+
+
+    
+    //joystick_to_PWM(msg);
+
   }
 }
 

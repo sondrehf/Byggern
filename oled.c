@@ -147,6 +147,8 @@ void oled_goto_pos(uint8_t row, uint8_t col){
 
 
 /* --------------------SRAM MEMORY TO OLED FROM HERE DOWN ----------------------------------*/
+/* MEMORY FOR SRAM CORRESPONDING TO OLED STARTS AT 0x1800 */
+
 void oled_write_d_sram(uint8_t data, uint8_t line, uint8_t col){
   /*  Divides the SRAm into pages corresponding to oledRAM
       Line is page!!!

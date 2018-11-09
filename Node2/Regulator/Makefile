@@ -1,5 +1,6 @@
 # List all source files to be compiled; separate with space
-SOURCE_FILES := main_node2_USART.c USART.c
+SOURCE_FILES := main_node2_regulator.c regulator.c ../Node2/USART/USART.c
+
 
 # Set this flag to "yes" (no quotes) to use JTAG; otherwise ISP (SPI) is used
 PROGRAM_WITH_JTAG := yes
@@ -10,7 +11,7 @@ ifeq ($(PROGRAM_WITH_JTAG), yes)
 	PROGRAMMER := atmelice
 endif
 
-VPATH = ../Node2/USART
+VPATH = ../Node2/Regulator
 
 BUILD_DIR := ../../build
 TARGET_CPU := atmega2560
