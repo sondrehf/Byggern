@@ -4,3 +4,4 @@
 
 void adc_config(uint8_t channel);
 uint8_t get_channel_value(uint8_t channel);
+uint8_t get_button_value();

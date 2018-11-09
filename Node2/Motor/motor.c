@@ -26,9 +26,11 @@ void motor_initialize(){
   DDRK = 0;
   //Set motor enable bit
   PORTH = (1<<EN);
+  //Set Solenoid button
+  DDRD |= (1<<PD2);
 }
 
-void TWI_motor_control(can_message msg, uint8_t input, uint8_t* dir){
+void TWI_motor_control(uint8_t input, uint8_t* dir){
   unsigned char msg_array[3];
   msg_array[0] = 0x50; //Address is zero, and the write bit is LSB.
   msg_array[1] = 0; //Deciding which output that transmits from DAC.
@@ -41,7 +43,6 @@ void TWI_motor_control(can_message msg, uint8_t input, uint8_t* dir){
     PORTH &= ~(1<<DIR);
   }
   //else{
-  
 
   TWI_Start_Transceiver_With_Data(msg_array, 3);
 }
@@ -80,14 +81,15 @@ void initial_position(){
   PORTH |= (1<<RST);
 }
 
-/* --------POSITION CONTROLLER ------------*/
-//TOTAL AMOUNT OF ROTATIONS FROM LEFT TO RIGHT 8730
-//int error_calc()
-uint8_t motor_controller_PD(uint8_t r){
-  double T = 1/50;
-  int e;
-  e = r-encoderValue;
-
+void solenoid_controller(uint8_t button){
+  if (button == 1){
+      PORTD |= (1<<PD2);
+      printf("%d\n", PORTD & (1<<PD2) );
+  }
+  else{
+    PORTD &= ~(1<<PD2);
+    printf("%d\n", PORTD & (1<<PD2) );
+  }
 }
 ISR(TIMER3_COMPA_vect){
   //encoderValue = read_encoder();

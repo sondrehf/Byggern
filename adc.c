@@ -37,6 +37,8 @@ void adc_config(uint8_t channel){
     _delay_us(40);
     uint8_t retrieved_value = ext_adc[0];
     printf("%d\n\r", retrieved_value);
+    //Setting up the Pin for right button
+    DDRB &= ~(0<<PB0);
   }
 }
 uint8_t get_channel_value(uint8_t channel){
@@ -45,4 +47,8 @@ uint8_t get_channel_value(uint8_t channel){
   _delay_us(40);
   uint8_t retrieved_value = ext_adc[0];
   return retrieved_value;
+}
+
+uint8_t get_button_value(){
+  return PINB & 1;
 }

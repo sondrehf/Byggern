@@ -57,23 +57,17 @@ int main(void){
   uint8_t input = 0;
   uint8_t* dir = 1;
   while(1){
-    //printf("%s\n\r", "heider");
-    //printf("%d\n", msg.data[1] );
-    absolutePositionRotation += read_encoder(); 
+    absolutePositionRotation += read_encoder();
     absolutePosition = absolutePositionRotation * ratio;
 
-    //printf("%s%d\r\n", "rotation ", absolutePositionRotation);
-    printf("%s%d\r\n", "pos ", absolutePosition);
-
-    input = regulator(&dir, 128, absolutePosition, &reg);
+    input = regulator(&dir, msg.data[1], absolutePosition, &reg);
 
 
-    //printf("%d\n\r", input);
-    TWI_motor_control(msg, input, &dir);
+    TWI_motor_control(input, &dir);
 
 
-    
-    //joystick_to_PWM(msg);
+    solenoid_controller(msg.data[2]);
+    joystick_to_PWM(msg);
 
   }
 }

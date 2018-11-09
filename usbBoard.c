@@ -96,13 +96,13 @@ void print_dir(enum joystick_direction dir){
 void motor_input_can_send(){
   can_message msg;
   msg.id = 0;
-  msg.length = 2;
+  msg.length = 3;
   //Joystick x position fetch
   msg.data[0] = get_x_raw_value();
   //Fetch right slider position
   msg.data[1] = get_right_value();
   //Button
-  //msg.data[2] = get_button();
+  msg.data[2] = !get_button_value();
   can_message_send(&msg);
 }
 
