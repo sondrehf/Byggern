@@ -11,6 +11,7 @@
 #include <util/delay.h>           // for _delay_ms()
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include "../adc/adc_node2.h"
 #include "../USART/USART.h"
 #include "../Timer/timer.h"
 #include "../Utilities/MCP2515_node2.h"
@@ -20,6 +21,7 @@
 #include "../Regulator/regulator.h"
 
 volatile static can_message msg;
+volatile static gameoverFlag = 1;
 
 int main(void){
   USART_init(MYUBRR);
@@ -27,6 +29,7 @@ int main(void){
   can_init();
   can_set_normal_mode();
   timer_pwm_init();
+  adc_node2_config();
   timer_interrupt_for_controller_init();
   TWI_Master_Initialise();
   motor_initialize();
@@ -50,13 +53,25 @@ int main(void){
   //start condition for output
   msg.data[1] = 128;
 
-
+  uint8_t values[4] = {0,0,0,0};
+  uint8_t counter = 0;
   int absolutePositionRotation = 0;
   uint8_t absolutePosition = 0;
   double ratio = 255.0/8900;
   uint8_t input = 0;
   uint8_t* dir = 1;
+  can_message gameover;
+  gameover.id = 69;
+  gameover.length = 1;
+  gameover.data[0] = 1;
   while(1){
+    uint8_t lost = game_over(values, &counter, 4);
+    printf("%d\n\r", lost);
+    if(lost &&  gameoverFlag){
+      can_message_send(&gameover);
+      gameoverFlag = 0;
+
+    }
     absolutePositionRotation += read_encoder();
     absolutePosition = absolutePositionRotation * ratio;
 
@@ -68,11 +83,11 @@ int main(void){
 
     solenoid_controller(msg.data[2]);
     joystick_to_PWM(msg);
-
   }
 }
 
 ISR(PCINT0_vect){
+  gameoverFlag = 1;
   uint8_t interrupt = mcp2515_read(MCP_CANINTF);
   uint8_t RX0_flag = interrupt & 0b00000001;
   //check to see if received data.

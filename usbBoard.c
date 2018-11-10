@@ -31,17 +31,17 @@ enum joystick_direction get_joystick_direction(struct joystick_angle angle){
   if((angle.xRawValue < 132 && angle.xRawValue > 124) && (angle.yRawValue < 132 && angle.yRawValue > 124)){
     return NEUTRAL;
   }
-  else if (angle.xRawValue < 80 && (angle.yRawValue <= 200 && angle.yRawValue >= 80)){
+  else if (angle.xRawValue < 60 && (angle.yRawValue <= 230 && angle.yRawValue >= 60)){
     return LEFT;
   }
-  else if (angle.xRawValue > 180 && (angle.yRawValue <= 200 && angle.yRawValue >= 80)){
+  else if (angle.xRawValue > 210 && (angle.yRawValue <= 230 && angle.yRawValue >= 60)){
       return RIGHT;
   }
-  else if (angle.yRawValue > 126 && (angle.xRawValue >= 0 && angle.xRawValue <= 255)) {
+  else if (angle.yRawValue > 170 && (angle.xRawValue >= 0 && angle.xRawValue <= 255)) {
     return UP;
   }
 
-  else if (angle.yRawValue < 126 && (angle.xRawValue <= 255 && angle.xRawValue >= 0)) {
+  else if (angle.yRawValue < 70 && (angle.xRawValue <= 255 && angle.xRawValue >= 0)) {
     return DOWN;
   }
   return ERROR;
@@ -99,11 +99,14 @@ void motor_input_can_send(){
   msg.length = 3;
   //Joystick x position fetch
   msg.data[0] = get_x_raw_value();
+
   //Fetch right slider position
   msg.data[1] = get_right_value();
   //Button
   msg.data[2] = !get_button_value();
   can_message_send(&msg);
+
+
 }
 
 

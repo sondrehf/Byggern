@@ -16,7 +16,7 @@ CUTOFF FREQUENCY: 1/(2*PI*R*C) = 796Hz
 SLOPE: 1st ORDER => 1*6dB/octave = 6dB/octave
 */
 /*----------CHANNEL CONFIGURATION--------------*/
-/*
+/*A
           Channel 0 = Y-axis
           Channel 1 = X-axis
           Channel 2 = Left slider
@@ -29,14 +29,12 @@ SLOPE: 1st ORDER => 1*6dB/octave = 6dB/octave
 
 void adc_config(uint8_t channel){
   if(channel>3 || channel < 0){
-    printf("This button is not yet configured\n\r");
   }
   else{
     volatile char * ext_adc = (char*) 0x1400;
     ext_adc[0] = 4+channel; //config channel CH(channel) (single ended)
     _delay_us(40);
     uint8_t retrieved_value = ext_adc[0];
-    printf("%d\n\r", retrieved_value);
     //Setting up the Pin for right button
     DDRB &= ~(0<<PB0);
   }

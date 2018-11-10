@@ -8,7 +8,7 @@
 #include "adc_node2.h"
 
 
-void adc_config(){
+void adc_node2_config(){
   //ENABLE ADC
   ADCSRA |= (1<<ADEN);
   //Choose input channel selection
@@ -29,19 +29,20 @@ int adc_conversion(){
   return value;
 }
 
-uint8_t score_counter(uint8_t score){
-  int value = adc_conversion();
-  printf("%d\n\r",value );
-  if(value < 10){
-    score++;
-    printf("%s: %d\n\r","Current score", score);
-    printf("%s\n\r", "Restarting in: 3" );
-    _delay_ms(1000);
-    printf("%s\n\r", "2" );
-    _delay_ms(1000);
-    printf("%s\n", "1" );
-    _delay_ms(1000);
-
+uint8_t game_over(uint8_t values[], uint8_t* counter, uint8_t length){
+  if (*counter == length){
+    *counter = 0;
   }
-  return score;
+  values[*counter] = adc_conversion();
+  printf("%d", adc_conversion());
+  (*counter)++;
+  uint16_t totalValue=0;
+  for(int i = 0; i< length; i++){
+    totalValue += values[i];
+  }
+  printf("value = %d\n\r", totalValue);
+  if(totalValue == 0){
+    return 1;
+  }
+  return 0;
 }

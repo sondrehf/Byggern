@@ -84,14 +84,11 @@ void initial_position(){
 void solenoid_controller(uint8_t button){
   if (button == 1){
       PORTD |= (1<<PD2);
-      printf("%d\n", PORTD & (1<<PD2) );
   }
   else{
     PORTD &= ~(1<<PD2);
-    printf("%d\n", PORTD & (1<<PD2) );
   }
 }
 ISR(TIMER3_COMPA_vect){
   //encoderValue = read_encoder();
-  //printf("%d\n",encoderValue );
 }

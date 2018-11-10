@@ -55,9 +55,7 @@ uint8_t can_message_send(can_message* msg){
 
   //Setting TX0RTS low to initiate transmission
   mcp2515_request_to_send(0);
-  //printf("Help me, im stuck\n");
   //Checking if TX0REQ buffer is cleared(message is sent)
-  //printf("jk\n" );
   while((mcp2515_read_status() & 0b00000100));
 
   return 0;
@@ -102,10 +100,8 @@ uint8_t can_int_vect(){
 /*
 int can_error(){
   if(can_message_send() == 1 ){
-    printf("%s\n\r", "Error, message could not send");
   }
   if(can_message_receive().length == -1 ){
-    printf("%s\n\r", "Error, could not read message");
   }
   return can_message_send() == 1 || can_message_receive().length == -1;
 }*/

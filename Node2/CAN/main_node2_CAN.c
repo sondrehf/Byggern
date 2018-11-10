@@ -42,8 +42,6 @@ int main(){
 
 
   while(1){
-    printf("%d, %x\n\r", msg.id, msg.length);
-    printf("%d, %d\n\r", msg.data[0],msg.data[1]);
 
     /*_delay_ms(100);
     msg.id = 79;

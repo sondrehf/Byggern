@@ -63,9 +63,7 @@ uint8_t can_message_send(can_message* msg){
 
   //Setting TX0RTS low to initiate transmission
   mcp2515_request_to_send(0);
-  //printf("Help me, im stuck\n");
   //Checking if TX0REQ buffer is cleared(message is sent)
-  //printf("jk\n" );
   while((mcp2515_read_status() & 0b00000100));
 
   return 0;
@@ -117,6 +115,5 @@ void timer_interrupt_for_can_init(){
 }
 
 ISR(TIMER3_COMPA_vect){
-  printf("%s\n\r", "Halla");
-  printf("%s\n", "PAT");
+
 }

@@ -217,7 +217,7 @@ void oled_read_screen_sram(){
 void oled_print_sram(const char* data, uint8_t fontSize, uint8_t line, uint8_t col){
   uint8_t i  = 0;
   while (data[i] != '\0'){
-    oled_write_letter_sram(data[i], fontSize, line, col + i*8);
+    oled_write_letter_sram(data[i], fontSize, line, col + i*fontSize);
     i++;
   }
 }
@@ -299,6 +299,21 @@ void oled_animation_shoot_ball_sram(uint8_t line, uint8_t startHeightPlat, uint8
     oled_write_platform_horizontal_sram(line, 0, startHeightPlat);
     oled_animation_circle_horizontal_sram(line, distanceFromStart, sign);
   }
+}
+
+void OLED_print_arrow_sram(uint8_t row, uint8_t col){
+    oled_write_d_sram(0b00011000, row, col);
+    oled_write_d_sram(0b00011000, row, col+1);
+    oled_write_d_sram(0b01111110, row, col+2);
+    oled_write_d_sram(0b00111100, row, col+3);
+    oled_write_d_sram(0b00011000, row, col+4);
+}
+void OLED_erase_arrow_sram(uint8_t row, uint8_t col){
+    oled_write_d_sram(0b00000000, row, col);
+    oled_write_d_sram(0b00000000, row, col+1);
+    oled_write_d_sram(0b00000000, row, col+2);
+    oled_write_d_sram(0b00000000, row, col+3);
+    oled_write_d_sram(0b00000000, row, col+4);
 }
 
 /* END OF SRAM USE HERE */

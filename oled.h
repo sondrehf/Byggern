@@ -29,6 +29,8 @@ void oled_animation_circle_horizontal_sram(uint8_t line, uint8_t* distanceFromSt
 void oled_write_platform_vertical_sram(uint8_t line, uint8_t col, uint8_t height);
 void oled_write_platform_horizontal_sram(uint8_t line, uint8_t col, uint8_t height);
 void oled_animation_shoot_ball_sram(uint8_t line, uint8_t startHeightPlat, uint8_t* distanceFromStart, uint8_t* sign);
+void OLED_print_arrow_sram(uint8_t row, uint8_t col);
+void OLED_erase_arrow_sram(uint8_t row, uint8_t col);
 
 /* --------------------Timer interrupt ----------------------------------*/
 void timer_interrupt_for_oled_init();
