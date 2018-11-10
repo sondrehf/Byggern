@@ -13,6 +13,8 @@
 #define BAUD 9600
 #define MYUBRR FOSC/16/BAUD-1
 
+
+
 void write_c(uint8_t command){
   volatile char * oled_c = (char *) 0x1000;
   oled_c[0] = command;
@@ -154,6 +156,7 @@ void oled_write_d_sram(uint8_t data, uint8_t line, uint8_t col){
       Line is page!!!
   */
   volatile char *ext_ram = (char *) 0x1800 + (128*line);
+
   ext_ram[col] = data;
 }
 
@@ -184,7 +187,7 @@ void oled_write_letter_sram(const char letter, uint8_t fontSize, uint8_t line, u
   }
 }
 
-void oled_init_sram(){
+void oled_clear_sram(){
   volatile char *ext_ram = (char *) 0x1800;
   for (int i = 0; i < 8*128; i++){
     ext_ram[i] = 0;
@@ -218,6 +221,86 @@ void oled_print_sram(const char* data, uint8_t fontSize, uint8_t line, uint8_t c
     i++;
   }
 }
+
+// There are a total of 64 rows
+// The old bits lying at the particular col are deleted
+// Not very useful function
+void oled_write_pixel_sram(uint8_t row, uint8_t col){
+  uint8_t page = row / 8;
+  uint8_t row_in_page = row - (page * 8);
+
+  uint8_t data = 1 << row_in_page;
+
+  oled_write_d_sram(data, page, col);
+}
+
+/* Animation and stuff. Uses SRAM */
+void oled_write_circle_sram(uint8_t line, uint8_t col){
+  // Hardcoding a circle
+  oled_write_d_sram(0b00111100, line, col);
+  oled_write_d_sram(0b01000010, line, col+1);
+  oled_write_d_sram(0b10000001, line, col+2);
+  oled_write_d_sram(0b10000001, line, col+3);
+  oled_write_d_sram(0b10000001, line, col+4);
+  oled_write_d_sram(0b10000001, line, col+5);
+  oled_write_d_sram(0b01000010, line, col+6);
+  oled_write_d_sram(0b00111100, line, col+7);
+}
+
+// A little trouble when the circle is all the way left
+void oled_animation_circle_horizontal_sram(uint8_t line, uint8_t* distanceFromStart, uint8_t* sign){
+  oled_write_circle_sram(line, *distanceFromStart);
+  if(*distanceFromStart + 8 > 127){
+    *sign = -1;
+  }
+  // Set this to 2 because it simplified shoot_ball animation
+  else if (*distanceFromStart == 2){
+    *sign = 1;
+  }
+  *distanceFromStart += *sign;
+}
+
+// Obsolete
+void oled_write_platform_vertical_sram(uint8_t line, uint8_t col, uint8_t height){
+  uint8_t top = 0b10000000;
+  top = top >> (height - 1);
+  uint8_t pole = 0b11111111;
+  pole &= (pole << (8 - height));
+  for (int i = 0; i <9 ; i++){
+    if (i == 4){
+        oled_write_d_sram(pole, line, col + i);
+    }
+    else{
+        oled_write_d_sram(top, line, col + i);
+    }
+  }
+}
+
+void oled_write_platform_horizontal_sram(uint8_t line, uint8_t col, uint8_t height){
+  for (int i = 0; i < height; i++){
+    if (i == (height - 1)){
+      oled_write_d_sram(0b11111111, line, col+i);
+    }
+    else{
+      oled_write_d_sram(0b00011000, line, col +i);
+    }
+  }
+}
+
+void oled_animation_shoot_ball_sram(uint8_t line, uint8_t startHeightPlat, uint8_t* distanceFromStart, uint8_t* sign){
+
+  if (*distanceFromStart <= (startHeightPlat + 1)){
+    oled_write_platform_horizontal_sram(line, 0, *distanceFromStart);
+    oled_animation_circle_horizontal_sram(line, distanceFromStart, sign);
+  }
+  //printf("Height: %d\n\r", height);
+  //printf("Distance: %d\r\n", *distanceFromStart);
+  else{
+    oled_write_platform_horizontal_sram(line, 0, startHeightPlat);
+    oled_animation_circle_horizontal_sram(line, distanceFromStart, sign);
+  }
+}
+
 /* END OF SRAM USE HERE */
 
 /* --------------------Timer interrupt ----------------------------------*/
@@ -228,16 +311,12 @@ void timer_interrupt_for_oled_init(){
   //Clock prescaling, N = 8
   TCCR1B |= (1<<CS11);
   // Default value for duty cycle, 60Hz
-  OCR1AH = 0x13;
-  OCR1AL = 0xFF;
+  //OCR1AH was 0x0A
+  OCR1AH = 0x0F;
+  OCR1AL = 0xF3;
   // Clear counter
   TCNT1H = 0;
   TCNT1L = 0;
   //Enable interrupt out of port OCIE1A
   TIMSK |= (1<<OCIE1A);
-}
-
-ISR(TIMER1_COMPA_vect){
-  printf("%s\n\r", "YIA");
-  printf("%s\n\r", "SSKKKKKKKKKKRT!!!! >:(");
 }

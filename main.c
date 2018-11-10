@@ -24,6 +24,9 @@
 
 volatile static can_message msg;
 
+/* Define flags here */
+volatile static uint8_t update_oled = 0;
+
 
 
 int main(void){
@@ -41,7 +44,21 @@ int main(void){
     can_set_normal_mode();
 
 
+    /* OLED AND SRAM TESTING */
+    timer_interrupt_for_oled_init();
+    oled_clear_sram();
+    // Variables used for animation (probably a better way to code it)
+    uint8_t distanceFromStart = 120;
+    uint8_t distanceFromStart2 = 30;
+    uint8_t distanceFromStart3 = 80;
+    uint8_t sign = 1;
+    uint8_t sign2 = 1;
+    uint8_t sign3 = 1;
+
+
     /* INTERRUPT ENABLE */
+
+
     // Button input
 
     DDRE &= ~(1<<PE0);
@@ -67,7 +84,29 @@ int main(void){
     menu_page varMenu = mainMenu;*/
 
     while(1){
-      _delay_ms(100);
+      //_delay_ms(100);
+
+      if (update_oled){
+        oled_reset();
+        oled_clear_sram();
+        //oled_write_platform_horizontal_sram(3, 20, 4);
+        //oled_animation_circle_horizontal_sram(6, &distanceFromStart, &sign);
+        //oled_animation_circle_horizontal_sram(4, &distanceFromStart2, &sign2);
+        //oled_animation_circle_horizontal_sram(2, &distanceFromStart3, &sign3);
+        oled_animation_shoot_ball_sram(7, 20, &distanceFromStart, &sign);
+        //oled_animation_shoot_ball_sram(4, 20, &distanceFromStart2, &sign2);
+        //oled_animation_shoot_ball_sram(2, 20, &distanceFromStart3, &sign3);
+        oled_read_screen_sram();
+        update_oled = 0;
+      }
+
+
+
+
+
+
+
+
 /*      msg.id = 69;
       msg.length = 8;
       msg.data[0] = (uint8_t)'Y';
@@ -79,7 +118,12 @@ int main(void){
       msg.data[6] = (uint8_t)'a';
       msg.data[7] = (uint8_t)'y';
       can_message_send(&msg);*/
-      motor_input_can_send();
+
+      // IMPORTANT SEND FUNCTION
+      //motor_input_can_send();
+
+
+
       /*  msg.data[2] = (uint8_t)'r';
         msg.data[3] = (uint8_t)'m';
         msg.data[4] = (uint8_t)'E';
@@ -111,6 +155,11 @@ int main(void){
 */
 
         /*pos = calculate_angle();
+
+
+        // ***** OLED AND MENU STUFF *****
+
+
         //printf("%s",mainMenu.ouint8_tptions[6].name);            oled_write_letter_sram('A', 8, 0, 0);
         //oled_init_sram();
         //oled_write_letter_sram('A', 8, 0, 0);
@@ -166,4 +215,9 @@ ISR(INT2_vect){
     msg = can_message_receive();
 
   }
+}
+
+// Interrupt for OLED, 60 Hz
+ISR(TIMER1_COMPA_vect){
+  update_oled = 1;
 }
