@@ -119,7 +119,6 @@ int main(void){
           varMenu = *varMenu.parent;
           arrowPos = 0;
         }
-        oled_reset();
         oled_read_screen_sram();
         //reset interrupt flag
         update_oled = 0;

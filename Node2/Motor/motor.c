@@ -81,6 +81,7 @@ void initial_position(){
 }
 
 void solenoid_controller(uint8_t button){
+  printf("Button: %d\n\r", button);
   if (button == 1){
       PORTD |= (1<<PD2);
   }

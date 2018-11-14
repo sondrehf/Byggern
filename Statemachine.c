@@ -44,7 +44,6 @@ void play_game(){
   oled_clear_sram();
   oled_print_sram("Playing Game", 8, 0, 0);
   oled_print_sram(difficulty, 8, 4, 0);
-  oled_reset();
   oled_read_screen_sram();
   while(!gameover){
     startTime = 0;
@@ -59,7 +58,6 @@ void play_game(){
       oled_clear_sram();
       oled_print_sram("YOUR SCORE WAS: ", 8, 4 ,0);
       oled_print_sram((char)(msg.data[0]), 8, 5, 0);
-      oled_reset();
       oled_read_screen_sram();
       _delay_ms(3000);
       (msg).id = 0;
