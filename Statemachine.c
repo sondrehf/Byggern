@@ -55,13 +55,13 @@ void play_game(){
     }
     timeCount++;
     if((msg).id==69){
-      /*printf("Å jasså");
+      printf("Å jasså");
       oled_clear_sram();
       oled_print_sram("YOUR SCORE WAS: ", 8, 4 ,0);
       oled_print_sram((char)(msg.data[0]), 8, 5, 0);
       oled_reset();
       oled_read_screen_sram();
-      _delay_ms(3000);*/
+      _delay_ms(3000);
       (msg).id = 0;
       gameover = 1;
 
