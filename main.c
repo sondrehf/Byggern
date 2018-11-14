@@ -45,11 +45,12 @@ int main(void){
     can_init();
     can_set_normal_mode();
 
-
+    cli();
     /* OLED AND SRAM TESTING */
     timer_interrupt_for_oled_init();
     oled_clear_sram();
     // Variables used for animation (probably a better way to code it)
+    timer_interrupt_for_can_init();
     uint8_t distanceFromStart = 120;
     uint8_t sign = 1;
 
@@ -58,7 +59,6 @@ int main(void){
     // Button input
     DDRE &= ~(1<<PE0);
     // Disable global interrupts
-    cli();
     // Interrupt on falling edge PE0
     EMCUCR &= ~(1<<ISC2);
     // Enable interrupt on PE0
@@ -81,13 +81,14 @@ int main(void){
     update_menu_page(mainMenu, dir, arrowPos, mainMenu.options);
     menu_page varMenu = mainMenu;
     while(1){
-      if (received_message){
+      //startTime = ;
+      if (received_message){//messageTimer >= 1/60 received_message){
+        //messageTimer = 0;
         msg = can_message_receive();
         //printf("%d",msg.id);
         received_message = 0;
       }
       if (update_oled){
-        oled_reset();
         oled_clear_sram();
 
         oled_animation_shoot_ball_sram(7, 20, &distanceFromStart, &sign);
@@ -109,20 +110,22 @@ int main(void){
         if (dir == LEFT && varMenu.parent != NULL && lastDir != dir){
           varMenu = *varMenu.parent;
         }
+        oled_reset();
         oled_read_screen_sram();
         //reset interrupt flag
         update_oled = 0;
         state_machine(&varMenu, &msg);
 
     }
+    //endTime =
+    //messageTimer += endTime - startTime;
+
   }
     return 0;
 }
 
 //Interrupt for received can message
 ISR(INT2_vect){
-  msg = can_message_receive();
-  printf("%d\n\r", msg.id);
   received_message = 1;
 
 }

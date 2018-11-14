@@ -101,19 +101,15 @@ uint8_t can_int_vect(){
 // Uses the 16-bit module 3 (module 2 does not exist)
 void timer_interrupt_for_can_init(){
   //Setting Timer/counter module 3 in Clear timer on Compare match mode (CTC).
-  TCCR3B |= (1<<WGM32);
+  TCCR1B |= (1<<WGM12);
   //Clock prescaling, N = 8
-  TCCR3B |= (1<<CS31);
-  // Default value for duty cycle, 60Hz
-  OCR3AH = 0x13;
-  OCR3AL = 0xFF;
+  TCCR1B |= (1<<CS11);
+  // Default value for duty cycle, 20Hz
+  OCR1BH = 0x3B;
+  OCR1BL = 0xFF;
   // Clear counter
-  TCNT3H = 0;
-  TCNT3L = 0;
+  TCNT1H = 0;
+  TCNT1L = 0;
   //Enable interrupt out of port OCIE3A
-  ETIMSK |= (1<<OCIE3A);
-}
-
-ISR(TIMER3_COMPA_vect){
-
+  TIMSK |= (1<<OCIE1B);
 }
