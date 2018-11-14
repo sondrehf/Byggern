@@ -99,7 +99,6 @@ void motor_input_can_send(){
   msg.length = 3;
   //Joystick x position fetch
   msg.data[0] = get_x_raw_value();
-  printf("%d\r\n", msg.data[0]);
 
   //Fetch right slider position
   msg.data[1] = get_right_value();

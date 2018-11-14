@@ -80,6 +80,13 @@ int main(void){
     int arrowPos = 0;
     update_menu_page(mainMenu, dir, arrowPos, mainMenu.options);
     menu_page varMenu = mainMenu;
+
+    can_message diffMsg;
+    diffMsg.id = 5;
+    diffMsg.length = 2;
+    diffMsg.data[0] = 1.5;
+    diffMsg.data[1] = 1.7;
+    can_message_send(&diffMsg);
     while(1){
       //startTime = ;
       //if (received_message){//messageTimer >= 1/60 received_message){

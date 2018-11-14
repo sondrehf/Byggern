@@ -66,7 +66,7 @@ int main(void){
   gameover.length = 1;
   gameover.data[0] = 1;
   regulator_data reg;
-  uint32_t scoreCounter = 0
+  uint32_t scoreCounter = 0;
   while(1){
     switch (msg.id) {
       case 5:
@@ -78,6 +78,10 @@ int main(void){
       case 7:
         regulator_init(msg.data[0], msg.data[1], 0, &reg);
         break;
+      default:
+        //regulator_init(msg.data[0], msg.data[1], 0, &reg);
+        break;
+
     }
     //ONLY PLAY GAME IF SIGNAL IS SENT!
     if(msg.id == 34){
@@ -93,8 +97,8 @@ int main(void){
           break;
         }
         if(readEncoderFlag){
-        readEncoderFlag = 0;
-        absolutePositionRotation += read_encoder();
+          readEncoderFlag = 0;
+          absolutePositionRotation += read_encoder();
           if(absolutePositionRotation > 9000){
             absolutePositionRotation = 9000;
           }
@@ -109,6 +113,7 @@ int main(void){
 
         joystick_to_PWM(msg);
         TWI_motor_control(input, &dir);
+        printf("%s\n","QUE" );
     }
     absolutePositionRotation = 0;
   }
@@ -120,6 +125,7 @@ int main(void){
 ISR(PCINT0_vect){
   //receivedMessage = 1;
   msg = can_message_receive();
+  //printf("%d : %d\n\r", msg.data[0],msg.data[1] );
 }
 ISR(TIMER3_COMPA_vect){
   readEncoderFlag = 1;
