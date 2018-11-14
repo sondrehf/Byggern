@@ -34,8 +34,7 @@ int main(void){
   TWI_Master_Initialise();
   motor_initialize();
   //Initialize regulator
-  regulator_data reg;
-  regulator_init(1.5, 1.7, 0, &reg);
+
 
 
   /* INTERRUPT ENABLE */
@@ -66,16 +65,29 @@ int main(void){
   gameover.id = 69;
   gameover.length = 1;
   gameover.data[0] = 1;
+  regulator_data reg;
+  uint32_t scoreCounter = 0
   while(1){
-
+    switch (msg.id) {
+      case 5:
+        regulator_init(msg.data[0], msg.data[1], 0, &reg);
+        break;
+      case 6:
+        regulator_init(msg.data[0], msg.data[1], 0, &reg);
+        break;
+      case 7:
+        regulator_init(msg.data[0], msg.data[1], 0, &reg);
+        break;
+    }
     //ONLY PLAY GAME IF SIGNAL IS SENT!
     if(msg.id == 34){
       initial_position();
       //printf("%s\n", "Leggo" );
       while(1){
-
+        scoreCounter++;
         uint8_t lost = game_over();
         if(lost){
+          gameover.data[0] = scoreCounter / F_CPU;
           can_message_send(&gameover);
           printf("%s\n","Game over bitch");
           break;

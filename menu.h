@@ -4,9 +4,6 @@
 #ifndef menu_h
 #define menu_h
 
-enum State{
-  MAINMENU, STARTNEWGAME, YES, NO, SETDIFFICULTY, EASY, MEDIUM, HARD, DEBUGGING, SEERESETHIGHSCORE, SEE, RESET
-};
 typedef enum State state;
 
 typedef struct Menu_page menu_page;

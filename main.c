@@ -69,7 +69,9 @@ int main(void){
 
 
 
-
+//Redusere strømspikes
+// stor kondensator over solenoiden
+// Prøve å containe de store strømspikes-ene til bare solenoiden
 
     menu_page mainMenu = menu_initialize();
     struct joystick_angle pos = calculate_angle();
@@ -104,9 +106,11 @@ int main(void){
         update_menu_page(varMenu, dir, arrowPos, varMenu.options);
         if (dir == RIGHT && varMenu.options[arrowPos] != NULL && lastDir != dir){
           varMenu = *varMenu.options[arrowPos];
+          arrowPos = 0;
         }
         if (dir == LEFT && varMenu.parent != NULL && lastDir != dir){
           varMenu = *varMenu.parent;
+          arrowPos = 0;
         }
         oled_reset();
         oled_read_screen_sram();
