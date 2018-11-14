@@ -22,6 +22,7 @@
 
 volatile static can_message msg;
 static volatile uint8_t receivedMessage;
+static volatile uint8_t readEncoderFlag;
 
 int main(void){
   USART_init(MYUBRR);
@@ -34,7 +35,7 @@ int main(void){
   motor_initialize();
   //Initialize regulator
   regulator_data reg;
-  regulator_init(1.2, 1, 0, &reg);
+  regulator_init(1.5, 1.7, 0, &reg);
 
 
   /* INTERRUPT ENABLE */
@@ -42,7 +43,7 @@ int main(void){
   DDRB &= ~(1<<PB6);
   // Disable global interrupts
   cli();
-  //timer_interrupt_for_controller_init();
+  timer_interrupt_for_controller_init();
 
   //Enable pin change interrupt on pin : PCINT 0:7
   PCICR |= (1<<PCIE0);
@@ -58,7 +59,7 @@ int main(void){
   uint8_t counter = 0;
   int absolutePositionRotation = 0;
   uint8_t absolutePosition = 0;
-  double ratio = 255.0/8900;
+  double ratio = 255.0/9000;
   uint8_t input = 0;
   uint8_t* dir = 1;
   can_message gameover;
@@ -67,30 +68,47 @@ int main(void){
   gameover.data[0] = 1;
   while(1){
 
-    if(receivedMessage){
-      receivedMessage = 0;
+    //ONLY PLAY GAME IF SIGNAL IS SENT!
+    if(msg.id == 34){
+      initial_position();
+      //printf("%s\n", "Leggo" );
+      while(1){
+
+        uint8_t lost = game_over();
+        if(lost){
+          can_message_send(&gameover);
+          printf("%s\n","Game over bitch");
+          break;
+        }
+        if(readEncoderFlag){
+        readEncoderFlag = 0;
+        absolutePositionRotation += read_encoder();
+          if(absolutePositionRotation > 9000){
+            absolutePositionRotation = 9000;
+          }
+          else if(absolutePositionRotation < 0){
+            absolutePositionRotation = 0;
+          }
+        }
+        absolutePosition = absolutePositionRotation * ratio;
+        printf("%d\n", absolutePositionRotation );
+        input = regulator(&dir, msg.data[1], absolutePosition, &reg);
+        solenoid_controller(msg.data[2]);
+
+        joystick_to_PWM(msg);
+        TWI_motor_control(input, &dir);
     }
-    uint8_t lost = game_over(values, &counter, 4);
-    if(lost){
-      can_message_send(&gameover);
-    }
-    absolutePositionRotation += read_encoder();
-    absolutePosition = absolutePositionRotation * ratio;
-
-    input = regulator(&dir, msg.data[1], absolutePosition, &reg);
-
-    solenoid_controller(msg.data[2]);
-
-    joystick_to_PWM(msg);
-    TWI_motor_control(input, &dir);
-
+    absolutePositionRotation = 0;
+  }
 
 
   }
 }
 
 ISR(PCINT0_vect){
-  receivedMessage = 1;
+  //receivedMessage = 1;
   msg = can_message_receive();
-
+}
+ISR(TIMER3_COMPA_vect){
+  readEncoderFlag = 1;
 }

@@ -3,13 +3,18 @@
 #include "CAN.h"
 #include "Statemachine.h"
 
-volatile static sendMessage = 0;
+volatile static can_message msg;
 
-void play_game(can_message *msg){
+
+void play_game(){
   uint8_t gameover = 0;
   //timer_interrupt_for_can_init();
   uint8_t startTime, endTime, timeCount;
   timeCount = 0;
+  can_message startGame;
+  startGame.id = 34;
+  startGame.length = 0;
+  can_message_send(&startGame);
   oled_clear_sram();
   oled_print_sram("Playing Game", 8, 0, 0);
   oled_reset();
@@ -22,8 +27,9 @@ void play_game(can_message *msg){
         printf("%s\n", "YIA");
     }
     timeCount++;
-    if((*msg).id==69){
-      (*msg).id = 0;
+    if((msg).id==69){
+      printf("%s\n", "I said game over" );
+      (msg).id = 0;
       gameover = 1;
     }
     //How many ticks for 60Hz
@@ -31,14 +37,14 @@ void play_game(can_message *msg){
   }
 }
 
-void state_machine(menu_page* page, can_message *msg){
+void state_machine(menu_page* page){
     switch ((*page).id){
       case 3:
         break;
       case 1:
-        play_game(msg);//difficulty);
-        //break;
-        //*page = menu_initialize();
+        play_game();//difficulty);
+        *page = menu_initialize();
+        break;
       case 2:
         *page = menu_initialize();
         break;
@@ -48,7 +54,9 @@ void state_machine(menu_page* page, can_message *msg){
 }
 
 
-ISR(TIMER1_COMPB_vect){
-  printf("%s\n\r", "lyf");
-  sendMessage = 1;
+
+//Interrupt for received can message
+ISR(INT2_vect){
+  //received_message = 1;
+  msg = can_message_receive();
 }

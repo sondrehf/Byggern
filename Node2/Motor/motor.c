@@ -42,7 +42,6 @@ void TWI_motor_control(uint8_t input, uint8_t* dir){
     msg_array[2] = input;
     PORTH &= ~(1<<DIR);
   }
-  //else{
 
   TWI_Start_Transceiver_With_Data(msg_array, 3);
 }
@@ -88,7 +87,4 @@ void solenoid_controller(uint8_t button){
   else{
     PORTD &= ~(1<<PD2);
   }
-}
-ISR(TIMER3_COMPA_vect){
-  //encoderValue = read_encoder();
 }

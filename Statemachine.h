@@ -3,5 +3,5 @@
 #include <stdio.h>
 
 
-void state_machine(menu_page* page, can_message *msg);
-void play_game(can_message*);
+void state_machine(menu_page* page);
+void play_game();

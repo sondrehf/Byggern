@@ -23,7 +23,6 @@
 #include "CAN.h"
 #include "Statemachine.h"
 
-volatile static can_message msg;
 
 /* Define flags here */
 volatile static uint8_t update_oled = 0;
@@ -50,7 +49,6 @@ int main(void){
     timer_interrupt_for_oled_init();
     oled_clear_sram();
     // Variables used for animation (probably a better way to code it)
-    timer_interrupt_for_can_init();
     uint8_t distanceFromStart = 120;
     uint8_t sign = 1;
 
@@ -82,12 +80,12 @@ int main(void){
     menu_page varMenu = mainMenu;
     while(1){
       //startTime = ;
-      if (received_message){//messageTimer >= 1/60 received_message){
+      //if (received_message){//messageTimer >= 1/60 received_message){
         //messageTimer = 0;
-        msg = can_message_receive();
+        //msg = can_message_receive();
         //printf("%d",msg.id);
-        received_message = 0;
-      }
+        //received_message = 0;
+      //}
       if (update_oled){
         oled_clear_sram();
 
@@ -114,7 +112,7 @@ int main(void){
         oled_read_screen_sram();
         //reset interrupt flag
         update_oled = 0;
-        state_machine(&varMenu, &msg);
+        state_machine(&varMenu);
 
     }
     //endTime =
@@ -124,11 +122,6 @@ int main(void){
     return 0;
 }
 
-//Interrupt for received can message
-ISR(INT2_vect){
-  received_message = 1;
-
-}
 
 // Interrupt for OLED, 60 Hz
 ISR(TIMER1_COMPA_vect){

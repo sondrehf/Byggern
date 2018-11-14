@@ -21,6 +21,21 @@ void regulator_init(double p_factor, double K_i, uint8_t d_factor, regulator_dat
 
 /* Have not implemented overflow check */
 uint8_t regulator(uint8_t* dir, uint8_t setPoint, uint8_t processValue, regulator_data* regData){
+  //Uninverting
+  //setPoint = 255 - setPoint;
+  //Setting deadband
+    if (processValue > 255){
+      processValue = 255;
+    }
+    else if(processValue < 5){
+      processValue = 5;
+    }
+    if(setPoint > 248){
+      setPoint = 248;
+    }
+    else if(setPoint < 5){
+      setPoint = 5;
+    }
     // computing the abs value of error
     uint8_t error = 0;
     if(processValue > setPoint){
