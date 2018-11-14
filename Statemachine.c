@@ -19,10 +19,10 @@ void play_game(can_message *msg){
     if (timeCount == endTime) {
         motor_input_can_send();
         timeCount = 0;
+        printf("%s\n", "YIA");
     }
     timeCount++;
     if((*msg).id==69){
-      oled_print_sram("Slipp meg inn", 8, 1,0 );
       (*msg).id = 0;
       gameover = 1;
     }

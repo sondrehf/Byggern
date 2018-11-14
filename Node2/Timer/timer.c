@@ -47,7 +47,6 @@ void joystick_to_PWM(can_message msg){
       msg = can_message_receive();
     }*/
     unsigned int tempVal = ((4200-1800)/255.0)*msg.data[0] + 1800;
-    //printf("%d\n", msg.data[0]);
     //printf("%d\n", tempVal);
 
     if((tempVal > 4200)){

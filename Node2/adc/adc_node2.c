@@ -29,18 +29,13 @@ int adc_conversion(){
   return value;
 }
 
-uint8_t game_over(uint8_t values[], uint8_t* counter, uint8_t length){
-  if (*counter == length){
-    *counter = 0;
+uint8_t game_over(){
+  uint16_t totalValue = 0;
+  for(int i = 0; i< 4; i++){
+    //_delay_ms(1);
+    totalValue += adc_conversion();
   }
-  values[*counter] = adc_conversion();
-  printf("%d", adc_conversion());
-  (*counter)++;
-  uint16_t totalValue=0;
-  for(int i = 0; i< length; i++){
-    totalValue += values[i];
-  }
-  printf("value = %d\n\r", totalValue);
+  //totalValue = (uint8_t)(totalValue);///4.0);
   if(totalValue == 0){
     return 1;
   }

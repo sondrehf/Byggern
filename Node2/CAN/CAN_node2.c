@@ -83,13 +83,7 @@ can_message can_message_receive(){
     //Resetting interrupt bit
     mcp2515_bit_modify(MCP_CANINTF, 0b00000001, 0); //Resetter RX0IF
     return msg;
-  /*}
-  msg.id = 88;
-  msg.length = -1;
-  for(uint8_t i = 0; i < 8; i++){
-    msg.data[i] = 0;
-  }
-  return msg;*/
+
 }
 
 //Interrupt handling, up to ATMEGA to decide what to do with the interrupt

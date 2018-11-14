@@ -21,7 +21,7 @@
 #include "../Regulator/regulator.h"
 
 volatile static can_message msg;
-volatile static gameoverFlag = 1;
+static volatile uint8_t receivedMessage;
 
 int main(void){
   USART_init(MYUBRR);
@@ -30,7 +30,6 @@ int main(void){
   can_set_normal_mode();
   timer_pwm_init();
   adc_node2_config();
-  timer_interrupt_for_controller_init();
   TWI_Master_Initialise();
   motor_initialize();
   //Initialize regulator
@@ -43,6 +42,8 @@ int main(void){
   DDRB &= ~(1<<PB6);
   // Disable global interrupts
   cli();
+  //timer_interrupt_for_controller_init();
+
   //Enable pin change interrupt on pin : PCINT 0:7
   PCICR |= (1<<PCIE0);
   //Setting PCINT6 interrupt
@@ -65,34 +66,31 @@ int main(void){
   gameover.length = 1;
   gameover.data[0] = 1;
   while(1){
-    uint8_t lost = game_over(values, &counter, 4);
-    printf("%d\n\r", lost);
-    if(lost &&  gameoverFlag){
-      can_message_send(&gameover);
-      gameoverFlag = 0;
 
+    if(receivedMessage){
+      receivedMessage = 0;
+    }
+    uint8_t lost = game_over(values, &counter, 4);
+    if(lost){
+      can_message_send(&gameover);
     }
     absolutePositionRotation += read_encoder();
     absolutePosition = absolutePositionRotation * ratio;
 
     input = regulator(&dir, msg.data[1], absolutePosition, &reg);
 
+    solenoid_controller(msg.data[2]);
 
+    joystick_to_PWM(msg);
     TWI_motor_control(input, &dir);
 
 
-    solenoid_controller(msg.data[2]);
-    joystick_to_PWM(msg);
+
   }
 }
 
 ISR(PCINT0_vect){
-  gameoverFlag = 1;
-  uint8_t interrupt = mcp2515_read(MCP_CANINTF);
-  uint8_t RX0_flag = interrupt & 0b00000001;
-  //check to see if received data.
-  if (RX0_flag){
-    msg = can_message_receive();
+  receivedMessage = 1;
+  msg = can_message_receive();
 
-  }
 }
