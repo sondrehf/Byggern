@@ -36,6 +36,7 @@ uint8_t game_over(){
     totalValue += adc_conversion();
   }
   //totalValue = (uint8_t)(totalValue);///4.0);
+  //printf("totalValue: %d\n", totalValue );
   if(totalValue == 0){
     return 1;
   }

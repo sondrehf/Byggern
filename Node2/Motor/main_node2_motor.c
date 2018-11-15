@@ -34,7 +34,6 @@ int main(void){
   adc_node2_config();
   TWI_Master_Initialise();
   motor_initialize();
-  initial_position();
   //Initialize regulator
 
 
@@ -86,6 +85,7 @@ int main(void){
       //printf("%s\n", "Leggo" );
       while(1){
         uint8_t lost = game_over();
+        //printf("%d\n\r", lost );
         if(lost){
           scoreCounter/=(50);
           gameover.id = 1;
@@ -110,7 +110,7 @@ int main(void){
         //printf("Check encoder again: %d\n\r", absolutePositionRotation );
         input = regulator(&dir, msg.data[1], absolutePosition, &reg);
         solenoid_controller(msg.data[2]);
-        printf("%d\n\r", msg.data[0] );
+        //printf("%d\n\r", msg.data[0] );
         joystick_to_PWM(msg);
         TWI_motor_control(input, &dir);
         //printf("%s\n","QUE" );

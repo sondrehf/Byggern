@@ -63,7 +63,8 @@ void play_game(){
       printf("%d\n",msg.data[0] );
       oled_print_sram(&score, 8, 5, 0);
       oled_read_screen_sram();
-      _delay_ms(3000);
+      //saveHighScore(msg.data[0]);
+      //_delay_ms(3000);
       (msg).id = 0;
       gameover = 1;
 

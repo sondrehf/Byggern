@@ -41,5 +41,25 @@ void SRAM_test(void) {
 }
 
 void saveHighScore(uint8_t score){
-  
+  volatile char *ext_ram = (char *) 0x1B01;
+  printf("Name?: ");
+  char name[3];
+  char temp = "";
+  uint8_t i = 0;
+  while(temp!=' '){
+    name[i] = temp;
+    temp = USART_receive();
+    i++;
+    USART_transmit(temp);
+  }
+  for(uint8_t i = 0; i<3*6; i++){
+    if(score > ext_ram[i]){
+      ext_ram[i] = name[i];
+      if ((i+3)%3 == 0){
+      ext_ram[i+15] = score;
+      break;
+      }
+    }
+  }
+  //printf("%c%d\n", ext_ram[0], ext_ram[18] );
 }
