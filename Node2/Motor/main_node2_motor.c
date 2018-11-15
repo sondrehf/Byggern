@@ -23,6 +23,7 @@
 volatile static can_message msg;
 static volatile uint8_t receivedMessage;
 static volatile uint8_t readEncoderFlag;
+static volatile uint32_t scoreCounter = 0;
 
 int main(void){
   USART_init(MYUBRR);
@@ -33,6 +34,7 @@ int main(void){
   adc_node2_config();
   TWI_Master_Initialise();
   motor_initialize();
+  initial_position();
   //Initialize regulator
 
 
@@ -50,23 +52,17 @@ int main(void){
   PCMSK0 |= (1<<PCINT6);
   //Enable global interrupts
   sei();
-  initial_position();
   //start condition for output
   msg.data[1] = 128;
 
   uint8_t values[4] = {0,0,0,0};
-  uint8_t counter = 0;
   int absolutePositionRotation = 0;
   uint8_t absolutePosition = 0;
   double ratio = 255.0/9000;
   uint8_t input = 0;
   uint8_t* dir = 1;
   can_message gameover;
-  gameover.id = 69;
-  gameover.length = 1;
-  gameover.data[0] = 1;
   regulator_data reg;
-  uint32_t scoreCounter = 0;
   while(1){
     switch (msg.id) {
       case 5:
@@ -86,12 +82,16 @@ int main(void){
     //ONLY PLAY GAME IF SIGNAL IS SENT!
     if(msg.id == 34){
       initial_position();
+      scoreCounter = 0;
       //printf("%s\n", "Leggo" );
       while(1){
-        scoreCounter++;
         uint8_t lost = game_over();
         if(lost){
-          gameover.data[0] = scoreCounter / F_CPU;
+          scoreCounter/=(50);
+          gameover.id = 1;
+          gameover.length = 1;
+          gameover.data[0] = scoreCounter;
+          printf("%d\n", scoreCounter );
           can_message_send(&gameover);
           printf("%s\n","Game over bitch");
           break;
@@ -107,13 +107,13 @@ int main(void){
           }
         }
         absolutePosition = absolutePositionRotation * ratio;
-        printf("%d\n", absolutePositionRotation );
+        //printf("Check encoder again: %d\n\r", absolutePositionRotation );
         input = regulator(&dir, msg.data[1], absolutePosition, &reg);
         solenoid_controller(msg.data[2]);
-
+        printf("%d\n\r", msg.data[0] );
         joystick_to_PWM(msg);
         TWI_motor_control(input, &dir);
-        printf("%s\n","QUE" );
+        //printf("%s\n","QUE" );
     }
     absolutePositionRotation = 0;
   }
@@ -129,4 +129,5 @@ ISR(PCINT0_vect){
 }
 ISR(TIMER3_COMPA_vect){
   readEncoderFlag = 1;
+  scoreCounter++;
 }

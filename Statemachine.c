@@ -17,12 +17,14 @@ enum States{PLAY = 1, STARTNEWGAME = 3, CALIBRATEJOYSTICK, EASY, MEDIUM, HARD, S
 volatile static can_message msg;
 volatile static char* difficulty;
 volatile static can_message diffMsg;
+volatile static uint8_t sendMessage = 0;
 
 
 
 void play_game(){
   cli();
   /* INTERRUPT ENABLE */
+  timer_interrupt_for_can_init();
   // Button input
   DDRE &= ~(1<<PE0);
   // Disable global interrupts
@@ -34,7 +36,7 @@ void play_game(){
   // Enable global interrupts
   sei();
 
-  uint8_t startTime, endTime, timeCount;
+  uint32_t startTime, endTime, timeCount;
   timeCount = 0;
   can_message startGame;
   startGame.id = 34;
@@ -46,18 +48,20 @@ void play_game(){
   oled_print_sram(difficulty, 8, 4, 0);
   oled_read_screen_sram();
   while(!gameover){
-    startTime = 0;
+    //startTime = 0;
+    //if(sendMessage){
+    motor_input_can_send();
+    sendMessage = 0;
+    //}
+    //printf("%s\n\r","MHVAFF" );
 
-    if (timeCount == endTime) {
-        motor_input_can_send();
-        timeCount = 0;
-    }
-    timeCount++;
-    if((msg).id==69){
-      printf("Å jasså");
+    if((msg).id==1){
       oled_clear_sram();
       oled_print_sram("YOUR SCORE WAS: ", 8, 4 ,0);
-      oled_print_sram((char)(msg.data[0]), 8, 5, 0);
+      char score[10];
+      itoa(msg.data[0], score,10);
+      printf("%d\n",msg.data[0] );
+      oled_print_sram(&score, 8, 5, 0);
       oled_read_screen_sram();
       _delay_ms(3000);
       (msg).id = 0;
@@ -65,7 +69,9 @@ void play_game(){
 
     }
     //How many ticks for 60Hz
-    endTime = 245760;
+    //endTime = FOSC/20;
+    //Tried to implement timer interrupt, but didnt work, something about timing destroyed our code.
+    _delay_ms(1000/60.0);
   }
 }
 
@@ -122,3 +128,8 @@ ISR(INT2_vect){
   msg = can_message_receive();
   printf("%d\n",msg.id );
 }
+
+/*ISR(TIMER3_COMPA_vect){
+  printf("%s\n\r","MHVAFF" );
+  //sendMessage = 1;
+}*/

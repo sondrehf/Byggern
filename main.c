@@ -48,6 +48,7 @@ int main(void){
     /* OLED AND SRAM TESTING */
     timer_interrupt_for_oled_init();
     oled_clear_sram();
+    timer_interrupt_for_can_init();
     // Variables used for animation (probably a better way to code it)
     uint8_t distanceFromStart = 120;
     uint8_t sign = 1;

@@ -39,3 +39,7 @@ void SRAM_test(void) {
   }
   printf("SRAM test completed with \r\n%4d errors in write phase and \r\n%4d errors in retrieval phase\n\n", write_errors, retrieval_errors);
 }
+
+void saveHighScore(uint8_t score){
+  
+}
