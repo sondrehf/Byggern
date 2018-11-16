@@ -126,7 +126,7 @@ void play_game(){
 void state_machine(menu_page* page){
     switch ((*page).id){
       case STARTNEWGAME: //Start new game
-      *page = *page->parent->options[3];
+        *page = *page->parent->options[3];
         break;
       case PLAY: //Start new game -> Yes
         play_game();//difficulty);
@@ -169,6 +169,7 @@ void state_machine(menu_page* page){
         break;
       case RESET:
         init_highScore();
+        (*page) = *page->parent;
         break;
       default:
         break;
