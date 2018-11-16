@@ -1,5 +1,5 @@
 # List all source files to be compiled; separate with space
-SOURCE_FILES := main_node2_adc.c adc_node2.c ../Node2/USART/USART.c
+SOURCE_FILES := main_node2_adc.c adc_node2.c ../USART/USART.c
 
 # Set this flag to "yes" (no quotes) to use JTAG; otherwise ISP (SPI) is used
 PROGRAM_WITH_JTAG := yes
@@ -12,7 +12,7 @@ endif
 
 VPATH = ../Node2/adc
 
-BUILD_DIR := ../../build
+BUILD_DIR := ../build
 TARGET_CPU := atmega2560
 TARGET_DEVICE := m2560
 

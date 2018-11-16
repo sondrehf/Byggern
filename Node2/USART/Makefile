@@ -10,9 +10,9 @@ ifeq ($(PROGRAM_WITH_JTAG), yes)
 	PROGRAMMER := atmelice
 endif
 
-VPATH = ../Node2/USART
+#VPATH = ../Node2/USART
 
-BUILD_DIR := ../../build
+BUILD_DIR := ../build
 TARGET_CPU := atmega2560
 TARGET_DEVICE := m2560
 

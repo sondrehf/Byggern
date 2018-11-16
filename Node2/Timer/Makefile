@@ -1,5 +1,5 @@
 # List all source files to be compiled; separate with space
-SOURCE_FILES := main_node2_timer.c timer.c ../Node2/Utilities/MCP2515_node2.c ../Node2/CAN/CAN_node2.c ../../usbBoard.c ../Node2/Utilities/SPI_node2.c ../../adc.c ../Node2/USART/USART.c ../Node2/Motor/motor.c ../Node2/Utilities/TWI_Master.c
+SOURCE_FILES := main_node2_timer.c timer.c ../Utilities/MCP2515_node2.c ../CAN/CAN_node2.c ../../usbBoard.c ../Utilities/SPI_node2.c ../../adc.c ../USART/USART.c ../Motor/motor.c ../Utilities/TWI_Master.c
 
 
 # Set this flag to "yes" (no quotes) to use JTAG; otherwise ISP (SPI) is used
@@ -13,7 +13,7 @@ endif
 
 VPATH = ../Node2/Timer
 
-BUILD_DIR := ../../build
+BUILD_DIR := ../build
 TARGET_CPU := atmega2560
 TARGET_DEVICE := m2560
 

@@ -91,7 +91,7 @@ int main(void){
           gameover.id = 1;
           gameover.length = 1;
           gameover.data[0] = scoreCounter;
-          printf("%d\n", scoreCounter );
+          printf("%d\n", gameover.id );
           can_message_send(&gameover);
           printf("%s\n","Game over bitch");
           break;

@@ -1,5 +1,5 @@
 # List all source files to be compiled; separate with space
-SOURCE_FILES := main_node2_motor.c motor.c ../Node2/adc/adc_node2.c ../Node2/Utilities/MCP2515_node2.c ../Node2/CAN/CAN_node2.c ../Node2/Utilities/SPI_node2.c  ../Node2/USART/USART.c ../Node2/Timer/timer.c ../Node2/Utilities/TWI_Master.c ../Node2/Regulator/regulator.c
+SOURCE_FILES := main_node2_motor.c motor.c ../adc/adc_node2.c ../Utilities/MCP2515_node2.c ../CAN/CAN_node2.c ../Utilities/SPI_node2.c  ../USART/USART.c ../Timer/timer.c ../Utilities/TWI_Master.c ../Regulator/regulator.c
 
 
 # Set this flag to "yes" (no quotes) to use JTAG; otherwise ISP (SPI) is used
@@ -11,9 +11,9 @@ ifeq ($(PROGRAM_WITH_JTAG), yes)
 	PROGRAMMER := atmelice
 endif
 
-VPATH = ../Node2/Motor
+#VPATH = ../Node2/Motor
 
-BUILD_DIR := ../../build
+BUILD_DIR := ../build
 TARGET_CPU := atmega2560
 TARGET_DEVICE := m2560
 
