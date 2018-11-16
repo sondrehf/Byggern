@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <avr/io.h>
+#include <avr/interrupt.h>
 
 void SRAM_test(void) {
   volatile char *ext_ram = (char *) 0x1800; // Start address for the SRAM
@@ -40,26 +41,52 @@ void SRAM_test(void) {
   printf("SRAM test completed with \r\n%4d errors in write phase and \r\n%4d errors in retrieval phase\n\n", write_errors, retrieval_errors);
 }
 
+void write_to_EEPROM(uint8_t uiAddress, unsigned char ucData){
+  //cli();
+  while(EECR & (1<<EEWE));
+  EEARH = 0;
+  EEARL = uiAddress;
+  EEDR = ucData;
+  EECR |= (1<<EEMWE);
+  EECR |= (1<<EEWE);
+  //sei();
+}
+unsigned char read_from_EEPROM(uint8_t uiAddress){
+  //cli();
+  while(EECR & (1<<EEWE));
+  EEAR = uiAddress;
+  EECR |= (1<<EERE);
+  //sei();
+  return EEDR;
+}
+
 void saveHighScore(uint8_t score){
   volatile char *ext_ram = (char *) 0x1B01;
   printf("Name?: ");
   char name[3];
-  char temp = "";
+  char temp = ' ';
   uint8_t i = 0;
-  while(temp!=' '){
-    name[i] = temp;
+  while(i<3){
     temp = USART_receive();
+    if(temp == '\r'){
+      break;
+    }
+    name[i] = temp;
     i++;
     USART_transmit(temp);
   }
-  for(uint8_t i = 0; i<3*6; i++){
-    if(score > ext_ram[i]){
-      ext_ram[i] = name[i];
-      if ((i+3)%3 == 0){
-      ext_ram[i+15] = score;
-      break;
+  for(uint8_t i = 3; i<4*6; i+=4){
+    if(score > read_from_EEPROM(i)){
+      //Jump to second last item, right shift this by 4.
+      for (uint8_t j=20; j>i; j--){
+        write_to_EEPROM(j+4, read_from_EEPROM(j));
       }
+      //Insert score into correct place
+      write_to_EEPROM(i-3, name[0]);
+      write_to_EEPROM(i-2, name[1]);
+      write_to_EEPROM(i-1, name[2]);
+      write_to_EEPROM(i, score);
+      break;
     }
   }
-  //printf("%c%d\n", ext_ram[0], ext_ram[18] );
 }

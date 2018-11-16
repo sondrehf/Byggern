@@ -12,14 +12,31 @@
 #include "CAN.h"
 #include "Statemachine.h"
 #include <avr/interrupt.h>
+#include "sRAM.h"
 
-enum States{PLAY = 1, STARTNEWGAME = 3, CALIBRATEJOYSTICK, EASY, MEDIUM, HARD, SETDIFFICULTY};
+
+enum States{PLAY = 1, STARTNEWGAME = 3, CALIBRATEJOYSTICK, EASY, MEDIUM, HARD, SETDIFFICULTY, SEE = 10, RESET = 11, SEERESETHIGHSCORE = 12};
 volatile static can_message msg;
 volatile static char* difficulty;
 volatile static can_message diffMsg;
 volatile static uint8_t sendMessage = 0;
 
-
+void display_scores(){
+  char printedScore[7];
+  char number[4];
+  while(1){
+    oled_clear_sram();
+    oled_print_sram("Highscore", 8, 0, 0);
+      for(uint8_t j = 3; j<24; j+=4){
+        oled_write_letter_sram(read_from_EEPROM(j-3), 5, (j+4)/4, 0);
+        oled_write_letter_sram(read_from_EEPROM(j-2), 5, (j+4)/4, 8);
+        oled_write_letter_sram(read_from_EEPROM(j-1), 5, (j+4)/4, 16);
+        sprintf(number, "%d", read_from_EEPROM(j));
+        oled_print_sram(&number, 5, (j+4)/4, 24);
+      }
+      oled_read_screen_sram();
+  }
+}
 
 void play_game(){
   cli();
@@ -63,7 +80,7 @@ void play_game(){
       printf("%d\n",msg.data[0] );
       oled_print_sram(&score, 8, 5, 0);
       oled_read_screen_sram();
-      //saveHighScore(msg.data[0]);
+      saveHighScore(msg.data[0]);
       //_delay_ms(3000);
       (msg).id = 0;
       gameover = 1;
@@ -116,9 +133,17 @@ void state_machine(menu_page* page){
         difficulty = "Hard";
         (*page).id = PLAY;
         break;
+      case SEERESETHIGHSCORE:
+        break;
+      case SEE:
+        display_scores();
+        break;
+      case RESET:
+        //init_highScore();
+        break;
       default:
         break;
-  }
+    }
 }
 
 
