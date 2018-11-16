@@ -13,7 +13,7 @@
 #include "Statemachine.h"
 #include <avr/interrupt.h>
 #include "sRAM.h"
-
+#include "usbBoard.h"
 
 enum States{PLAY = 1, STARTNEWGAME = 3, CALIBRATEJOYSTICK, EASY, MEDIUM, HARD, SETDIFFICULTY, SEE = 10, RESET = 11, SEERESETHIGHSCORE = 12};
 volatile static can_message msg;
@@ -22,26 +22,58 @@ volatile static can_message diffMsg;
 volatile static uint8_t sendMessage = 0;
 
 void display_scores(){
-  char printedScore[7];
+  //printf("\n\r%c %c %c: %d\n\r", read_from_EEPROM(0), read_from_EEPROM(1), read_from_EEPROM(2), read_from_EEPROM(3));
+  char number[4];
+  oled_clear_sram();
+  oled_print_sram("Highscore", 8, 0, 0);
+  uint8_t i = 1;
+  char lineNumber[3];
+  for(uint8_t j = 3; j<24; j+=4){
+    sprintf(lineNumber, "%d", i);
+    lineNumber[1] = '.';
+    lineNumber[2] = '\0';
+    oled_print_sram(&lineNumber, 5, i, 0);
+    oled_write_letter_sram(read_from_EEPROM(j-3)-128, 5, i, 16);
+    oled_write_letter_sram(read_from_EEPROM(j-2)-128, 5, i, 24);
+    oled_write_letter_sram(read_from_EEPROM(j-1)-128, 5, i, 32);
+    sprintf(number, "%d", read_from_EEPROM(j));
+    oled_print_sram(&number, 5, i, 50);
+    i++;
+  }
+  oled_read_screen_sram();
+  while(get_x_raw_value() > 5);
+
+/*  char printedScore[4];
   char number[4];
   while(1){
-    oled_clear_sram();
+    if(get_x_raw_value() < 10){
+      break;
+    }*/
+
+    /*oled_clear_sram();
     oled_print_sram("Highscore", 8, 0, 0);
-      for(uint8_t j = 3; j<24; j+=4){
-        oled_write_letter_sram(read_from_EEPROM(j-3), 5, (j+4)/4, 0);
+      /*for(uint8_t j = 3; j<24; j+=4){
+        sprintf(printedScore, "%c", read_from_EEPROM(j-3));
+        /*oled_write_letter_sram(read_from_EEPROM(j-3), 5, (j+4)/4, 0);
         oled_write_letter_sram(read_from_EEPROM(j-2), 5, (j+4)/4, 8);
         oled_write_letter_sram(read_from_EEPROM(j-1), 5, (j+4)/4, 16);
         sprintf(number, "%d", read_from_EEPROM(j));
+        oled_print_sram(&printedScore, 5, (j+4)/4, 0);
         oled_print_sram(&number, 5, (j+4)/4, 24);
       }
-      oled_read_screen_sram();
-  }
+      sprintf(number, "%d", read_from_EEPROM(1));
+      number[0] -= 128;
+      number[0] = (char)number[0];
+      oled_print_sram(&number, 5, (0+4)/4, 24);
+      oled_read_screen_sram();*/
+  //}
+  //printf("%c %c\n\r", read_from_EEPROM(0), read_from_EEPROM(1));
 }
 
 void play_game(){
   cli();
   /* INTERRUPT ENABLE */
-  timer_interrupt_for_can_init();
+  //timer_interrupt_for_can_init();
   // Button input
   DDRE &= ~(1<<PE0);
   // Disable global interrupts
@@ -65,12 +97,9 @@ void play_game(){
   oled_print_sram(difficulty, 8, 4, 0);
   oled_read_screen_sram();
   while(!gameover){
-    //startTime = 0;
-    //if(sendMessage){
+
     motor_input_can_send();
     sendMessage = 0;
-    //}
-    //printf("%s\n\r","MHVAFF" );
 
     if((msg).id==1){
       oled_clear_sram();
@@ -81,16 +110,15 @@ void play_game(){
       oled_print_sram(&score, 8, 5, 0);
       oled_read_screen_sram();
       saveHighScore(msg.data[0]);
-      //_delay_ms(3000);
       (msg).id = 0;
       gameover = 1;
 
     }
-    //How many ticks for 60Hz
-    //endTime = FOSC/20;
     //Tried to implement timer interrupt, but didnt work, something about timing destroyed our code.
     _delay_ms(1000/60.0);
   }
+  //Disable interrupt when we dont need it
+  //GICR &= ~(1<<INT2);
 }
 
 
@@ -137,9 +165,10 @@ void state_machine(menu_page* page){
         break;
       case SEE:
         display_scores();
+        (*page).id = SEERESETHIGHSCORE;
         break;
       case RESET:
-        //init_highScore();
+        init_highScore();
         break;
       default:
         break;

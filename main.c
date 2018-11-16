@@ -26,7 +26,6 @@
 
 /* Define flags here */
 volatile static uint8_t update_oled = 0;
-volatile static int received_message = 0;
 
 
 
@@ -49,7 +48,7 @@ int main(void){
     timer_interrupt_for_oled_init();
     oled_clear_sram();
     timer_interrupt_for_can_init();
-    // Variables used for animation (probably a better way to code it)
+    // Variables used for animation
     uint8_t distanceFromStart = 120;
     uint8_t sign = 1;
 
@@ -66,14 +65,6 @@ int main(void){
     // Enable global interrupts
     sei();
     /*INTERRUPT ENABLE FINISHED*/
-
-
-
-
-//Redusere strømspikes
-// stor kondensator over solenoiden
-// Prøve å containe de store strømspikes-ene til bare solenoiden
-
     menu_page mainMenu = menu_initialize();
     struct joystick_angle pos = calculate_angle();
     enum joystick_direction dir=get_joystick_direction(pos);
@@ -89,20 +80,10 @@ int main(void){
     diffMsg.data[1] = 1.7;
     can_message_send(&diffMsg);
     while(1){
-      //startTime = ;
-      //if (received_message){//messageTimer >= 1/60 received_message){
-        //messageTimer = 0;
-        //msg = can_message_receive();
-        //printf("%d",msg.id);
-        //received_message = 0;
-      //}
       if (update_oled){
         oled_clear_sram();
 
         oled_animation_shoot_ball_sram(7, 20, &distanceFromStart, &sign);
-        //oled_read_screen_sram();
-        // IMPORTANT SEND FUNCTION
-        //motor_input_can_send();
         pos = calculate_angle();
 
         // ***** OLED AND MENU STUFF *****
@@ -126,9 +107,6 @@ int main(void){
         state_machine(&varMenu);
 
     }
-    //endTime =
-    //messageTimer += endTime - startTime;
-
   }
     return 0;
 }

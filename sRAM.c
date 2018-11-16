@@ -60,17 +60,19 @@ unsigned char read_from_EEPROM(uint8_t uiAddress){
   return EEDR;
 }
 
+void init_highScore(){
+  for(int i = 0; i<29; i++){
+    write_to_EEPROM(i, 0);
+  }
+}
+
 void saveHighScore(uint8_t score){
-  volatile char *ext_ram = (char *) 0x1B01;
   printf("Name?: ");
   char name[3];
   char temp = ' ';
   uint8_t i = 0;
   while(i<3){
     temp = USART_receive();
-    if(temp == '\r'){
-      break;
-    }
     name[i] = temp;
     i++;
     USART_transmit(temp);

@@ -63,6 +63,9 @@ int main(void){
   can_message gameover;
   regulator_data reg;
   while(1){
+    if(receivedMessage){
+      msg = can_message_receive();
+    }
     switch (msg.id) {
       case 5:
         regulator_init(msg.data[0], msg.data[1], 0, &reg);
@@ -84,6 +87,9 @@ int main(void){
       scoreCounter = 0;
       //printf("%s\n", "Leggo" );
       while(1){
+        if(receivedMessage){
+          msg = can_message_receive();
+        }
         uint8_t lost = game_over();
         //printf("%d\n\r", lost );
         if(lost){
@@ -107,7 +113,7 @@ int main(void){
           }
         }
         absolutePosition = absolutePositionRotation * ratio;
-        //printf("Check encoder again: %d\n\r", absolutePositionRotation );
+        printf("Check encoder again: %d\n\r", absolutePositionRotation );
         input = regulator(&dir, msg.data[1], absolutePosition, &reg);
         solenoid_controller(msg.data[2]);
         //printf("%d\n\r", msg.data[0] );
@@ -123,8 +129,7 @@ int main(void){
 }
 
 ISR(PCINT0_vect){
-  //receivedMessage = 1;
-  msg = can_message_receive();
+  receivedMessage = 1;
   //printf("%d : %d\n\r", msg.data[0],msg.data[1] );
 }
 ISR(TIMER3_COMPA_vect){
