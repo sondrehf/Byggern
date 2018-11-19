@@ -22,7 +22,7 @@ void regulator_init(double p_factor, double K_i, uint8_t d_factor, regulator_dat
 /* Have not implemented overflow check */
 uint8_t regulator(uint8_t* dir, uint8_t setPoint, uint8_t processValue, regulator_data* regData){
   //Uninverting
-  //setPoint = 255 - setPoint;
+  setPoint = 255 - setPoint;
   //Setting deadband
     if (processValue > 255){
       processValue = 255;

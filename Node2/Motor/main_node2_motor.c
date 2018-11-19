@@ -92,16 +92,18 @@ int main(void){
         }
         uint8_t lost = game_over();
         //printf("%d\n\r", lost );
+        gameover.data[0] = scoreCounter/50.0;
         if(lost){
-          scoreCounter/=(50);
           gameover.id = 1;
           gameover.length = 1;
-          gameover.data[0] = scoreCounter;
           printf("%d\n", gameover.id );
           can_message_send(&gameover);
           printf("%s\n","Game over bitch");
           break;
         }
+        gameover.id = 63;
+        gameover.length = 1;
+        can_message_send(&gameover);
         if(readEncoderFlag){
           readEncoderFlag = 0;
           absolutePositionRotation += read_encoder();

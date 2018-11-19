@@ -20,34 +20,30 @@ menu_page page_init(const char* name, const menu_page* parent, const uint8_t siz
 
 menu_page menu_initialize(){
 
-   menu_page mainMenu, StartNewGame, SetDifficulty, SeeResetHighscore;
+  menu_page mainMenu, StartNewGame, SetDifficulty, SeeResetHighscore;
 
-   menu_page Yes = page_init("Yes", &StartNewGame, 0, NULL, 1);
-   menu_page No = page_init("No", &StartNewGame, 0, NULL, 2);
-   menu_page startOpt[] = {&Yes, &No};
-   StartNewGame = page_init("Start New Game", &mainMenu, 2, startOpt, 3);
+  menu_page Yes = page_init("Yes", &StartNewGame, 0, NULL, 1);
+  menu_page No = page_init("No", &StartNewGame, 0, NULL, 2);
+  menu_page startOpt[] = {&Yes, &No};
+  StartNewGame = page_init("Start New Game", &mainMenu, 2, startOpt, 3);
 
-   menu_page CalibrateJoystick = page_init("Calibrate Joystick", &mainMenu, 0, NULL, 4);
+  menu_page CalibrateJoystick = page_init("Calibrate Joystick", &mainMenu, 0, NULL, 4);
 
-   menu_page Easy = page_init("Easy", &SetDifficulty, 0, NULL, 5);
-   menu_page Medium = page_init("Medium", &SetDifficulty, 0, NULL, 6);
-   menu_page Hard = page_init("Hard", &SetDifficulty, 0, NULL, 7);
-   menu_page difOpt[] = {&Easy, &Medium, &Hard};
-   SetDifficulty = page_init("Set Difficulty", &mainMenu, 3, difOpt,8);
+  menu_page Easy = page_init("Easy", &SetDifficulty, 0, NULL, 5);
+  menu_page Medium = page_init("Medium", &SetDifficulty, 0, NULL, 6);
+  menu_page Hard = page_init("Hard", &SetDifficulty, 0, NULL, 7);
+  menu_page difOpt[] = {&Easy, &Medium, &Hard};
+  SetDifficulty = page_init("Set Difficulty", &mainMenu, 3, difOpt,8);
 
 
-   menu_page Debugging = page_init("Debug", &mainMenu, 0, NULL, 9);
+  menu_page Debugging = page_init("Debug", &mainMenu, 0, NULL, 9);
 
-   menu_page See = page_init("See", &SeeResetHighscore, 0, NULL, 10);
-   menu_page Reset = page_init("Reset", &SeeResetHighscore, 0, NULL, 11);
-   menu_page seReOpt[] = {&See, &Reset};
-   SeeResetHighscore = page_init("See/Reset Higscore", &mainMenu, 2, seReOpt, 12);
+  menu_page See = page_init("See", &SeeResetHighscore, 0, NULL, 10);
+  menu_page Reset = page_init("Reset", &SeeResetHighscore, 0, NULL, 11);
+  menu_page seReOpt[] = {&See, &Reset};
+  SeeResetHighscore = page_init("See/Reset Higscore", &mainMenu, 2, seReOpt, 12);
 
-   menu_page mainOpt[] = {&StartNewGame, &SeeResetHighscore, &CalibrateJoystick, &SetDifficulty};//, &Debugging};
-   //mainOpt[0] = &StartNewGame;
-   //mainOpt[1] = &YIA;
-
-  //mainOpt = *StartNewGame;
+  menu_page mainOpt[] = {&StartNewGame, &SeeResetHighscore, &CalibrateJoystick, &SetDifficulty};//, &Debugging};
 
   mainMenu = page_init("Main Menu", NULL, 4, mainOpt, 13);
   return mainMenu;
