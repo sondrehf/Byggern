@@ -42,19 +42,18 @@ void SRAM_test(void) {
 }
 
 void write_to_EEPROM(uint8_t uiAddress, unsigned char ucData){
-  while(EECR & (1<<EEWE));
-  EEARH = 0;
-  EEARL = uiAddress;
-  EEDR = ucData;
   cli();
+  while(EECR & (1<<EEWE));
+  EEAR = uiAddress;
+  EEDR = ucData;
   EECR |= (1<<EEMWE);
   EECR |= (1<<EEWE);
   sei();
 }
 unsigned char read_from_EEPROM(uint8_t uiAddress){
+  cli();
   while(EECR & (1<<EEWE));
   EEAR = uiAddress;
-  cli();
   EECR |= (1<<EERE);
   sei();
   return EEDR;
@@ -68,8 +67,9 @@ void init_highScore(){
 }
 
 void saveHighScore(uint8_t score){
+  read_data_on_highscore();
   printf("Name:\n\r ");
-  char name[3];
+  unsigned char name[3];
   char temp = ' ';
   uint8_t i = 0;
   while(i<3){
@@ -79,11 +79,17 @@ void saveHighScore(uint8_t score){
     USART_transmit(temp);
   }
   //printf("\n\r%s", "Thats gay" );
+
   for(uint8_t i = 3; i<4*6; i+=4){
     if(score > read_from_EEPROM(i)){
       //Jump to second last item, right shift this by 4.
-      for (uint8_t j=19; j>i; j--){
-        write_to_EEPROM(j+4, read_from_EEPROM(j));
+      for (uint8_t j=20; j>i-4; j--){
+        uint8_t data = read_from_EEPROM(j);
+        write_to_EEPROM(j+4, data);
+        //USART_transmit((char) j);
+        if (j==0){
+          break;
+        }
       }
       //Insert score into correct place
       write_to_EEPROM(i-3, name[0]);
@@ -92,5 +98,12 @@ void saveHighScore(uint8_t score){
       write_to_EEPROM(i, score);
       break;
     }
+  }
+}
+
+void read_data_on_highscore(){
+  for (int i = 0; i < 23; i++){
+    unsigned char data = read_from_EEPROM(i);
+    USART_transmit(data);
   }
 }
