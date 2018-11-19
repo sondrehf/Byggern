@@ -1,7 +1,3 @@
-#include <avr/io.h>
-#include <util/delay.h>
-#include <stdio.h>
-#include "SPI.h"
 #include "MCP2515.h"
 
 #define SS DDB4
@@ -41,7 +37,6 @@ uint8_t mcp2515_read(uint8_t address){
   SPI_send(MCP_READ);
   SPI_send(address);
 
-
   uint8_t value = SPI_read();
 
   PORTB |= (1 << SS); // Deselect MCP (raising CS_bar pin)
@@ -57,7 +52,6 @@ void mcp2515_write(uint8_t address,uint8_t data){
   SPI_send(data);
 
   PORTB |= (1 << SS);
-
 }
 
 void mcp2515_request_to_send(uint8_t TXiRTS){
@@ -101,7 +95,6 @@ void mcp2515_bit_modify(uint8_t address, uint8_t maskByte, uint8_t dataByte){
   SPI_send(dataByte);
 
   PORTB |= (1 << SS);
-
 }
 
 void mcp2515_reset(){
@@ -110,5 +103,4 @@ void mcp2515_reset(){
   SPI_send(MCP_RESET);
 
   PORTB |= (1 << SS);
-
 }

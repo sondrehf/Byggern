@@ -6,33 +6,14 @@
 #define BAUD 9600
 #define MYUBRR FOSC/16/BAUD-1
 
-#include <stdio.h>
-#include <util/delay.h>           // for _delay_ms()
-#include <avr/io.h>
-#include <avr/interrupt.h>
 #include <avr/pgmspace.h>
-#include "uart.h"
-#include "latch.h"
-#include "sRAM.h"
-#include "adc.h"
-#include "usbBoard.h"
-#include "oled.h"
-#include "menu.h"
-#include "SPI.h"
-#include "MCP2515.h"
-#include "CAN.h"
 #include "Statemachine.h"
+#include "uart.h"
+#include "sRAM.h"
 
-
-/* Define flags here */
 volatile static uint8_t update_oled = 0;
 
-
-
 int main(void){
-
-
-
     _delay_ms(1000);
     USART_init(MYUBRR);
     printf_init();
@@ -43,17 +24,11 @@ int main(void){
     can_init();
     can_set_normal_mode();
 
+    /* INTERRUPT ENABLE */
     cli();
     /* OLED AND SRAM TESTING */
     timer_interrupt_for_oled_init();
-    oled_clear_sram();
     timer_interrupt_for_can_init();
-    // Variables used for animation
-    uint8_t distanceFromStart = 120;
-    uint8_t sign = 1;
-
-
-    /* INTERRUPT ENABLE */
     // Button input
     DDRE &= ~(1<<PE0);
     // Disable global interrupts
@@ -65,6 +40,13 @@ int main(void){
     // Enable global interrupts
     sei();
     /*INTERRUPT ENABLE FINISHED*/
+
+    // Variables used for animation
+    oled_clear_sram();
+    uint8_t distanceFromStart = 120;
+    uint8_t sign = 1;
+
+    //menu_page initialize
     menu_page mainMenu = menu_initialize();
     struct joystick_angle pos = calculate_angle();
     enum joystick_direction dir=get_joystick_direction(pos);
@@ -73,17 +55,18 @@ int main(void){
     update_menu_page(mainMenu, dir, arrowPos, mainMenu.options);
     menu_page varMenu = mainMenu;
 
+    //Standard values for PI-controller (Easy mode)
     can_message diffMsg;
     diffMsg.id = 5;
     diffMsg.length = 2;
     diffMsg.data[0] = 1.5;
     diffMsg.data[1] = 1.7;
     can_message_send(&diffMsg);
+
     while(1){
       if (update_oled){
         menu_page mainMenu = menu_initialize();
         oled_clear_sram();
-
         oled_animation_shoot_ball_sram(7, 20, &distanceFromStart, &sign);
         pos = calculate_angle();
 
@@ -106,12 +89,10 @@ int main(void){
         //reset interrupt flag
         update_oled = 0;
         state_machine(&varMenu);
-
+      }
     }
-  }
     return 0;
 }
-
 
 // Interrupt for OLED, 60 Hz
 ISR(TIMER1_COMPA_vect){

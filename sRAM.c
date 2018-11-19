@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <avr/io.h>
-#include <avr/interrupt.h>
+#include "sRAM.h"
 
 void SRAM_test(void) {
   volatile char *ext_ram = (char *) 0x1800; // Start address for the SRAM
@@ -50,6 +50,7 @@ void write_to_EEPROM(uint8_t uiAddress, unsigned char ucData){
   EECR |= (1<<EEWE);
   sei();
 }
+
 unsigned char read_from_EEPROM(uint8_t uiAddress){
   cli();
   while(EECR & (1<<EEWE));
@@ -77,7 +78,6 @@ void saveHighScore(uint8_t score){
     i++;
     USART_transmit(temp);
   }
-
 
   for(uint8_t i = 3; i<4*6; i+=4){
     if(score > read_from_EEPROM(i)){

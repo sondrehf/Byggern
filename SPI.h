@@ -1,4 +1,5 @@
-// FUNCTIONS
+#include <avr/io.h>
+#include <stdio.h>
 
 void SPI_init();
 uint8_t SPI_read();

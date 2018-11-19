@@ -19,7 +19,6 @@ struct Regulator_data{
   uint8_t maxError;
   // Maximum allowed sumerror, avoid overflow
   uint16_t maxSumError;
-
 };
 
 void regulator_init(double p_factor, double K_i, uint8_t d_factor, regulator_data* reg);

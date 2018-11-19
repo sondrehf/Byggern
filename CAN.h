@@ -1,6 +1,9 @@
 #ifndef CAN_h
 #define CAN_h
-
+#include <avr/io.h>
+#include <stdio.h>
+#include <avr/interrupt.h>
+#include "MCP2515.h"
 
 typedef struct Can_message can_message;
 

@@ -1,7 +1,3 @@
-#include <util/delay.h>           // for _delay_ms()
-#include <avr/io.h>
-#include <avr/pgmspace.h>
-#include <avr/interrupt.h>
 #include "oled.h"
 #include "fonts.h"
 
@@ -13,20 +9,15 @@
 #define BAUD 9600
 #define MYUBRR FOSC/16/BAUD-1
 
-
-
 void write_c(uint8_t command){
   volatile char * oled_c = (char *) 0x1000;
   oled_c[0] = command;
-
 }
 
 void write_d(uint8_t data){
   volatile char * oled_d = (char *) 0x1200;
   oled_d[0] = data;
 }
-
-
 
 void oled_init(){
   write_c(0xae);        //  display  off
@@ -51,14 +42,9 @@ void oled_init(){
   write_c(0xa4);        //out  follows  RAM  content
   write_c(0xa6);        //set  normal  display
   write_c(0xaf);        //  display  on
-
-
   write_c(0xB0);        //Set page
   write_c(0x00);        //Set lower column start Address
   write_c(0x10);        //Set higher column end start Address
-
-
-
 }
 
 
@@ -77,12 +63,6 @@ void oled_reset(){
   write_c(0xB0);
 }
 
-
-/*
-menu_page* oled_home(menu_page page){
-  //Obsolete?
-}
-*/
 void oled_goto_page(uint8_t page){
   write_c(0xB0 + page);
 }
@@ -92,7 +72,6 @@ void oled_goto_line(uint8_t line){
   /*Please sir, may i have some more... Pants*/
   write_c(0x40 + (63-line));
 }
-
 
 void oled_goto_column(uint8_t column){
   uint8_t lowerBits = column & 0x0F;
@@ -127,7 +106,6 @@ void oled_write_letter_P(const uint8_t letter, uint8_t fontSize){
   }
 }
 
-
 void oled_print(const char* data, uint8_t fontSize){
   uint8_t i  = 0;
   while (data[i] != '\0'){
@@ -137,15 +115,10 @@ void oled_print(const char* data, uint8_t fontSize){
 }
 
 void oled_goto_pos(uint8_t row, uint8_t col){
-  //oled_goto_line(row*8 + 1);
-
   oled_goto_page(row);
   oled_goto_column(col);
 }
-
 /* END OF OLED MEMORY USE FUNCTIONS */
-
-
 
 
 /* --------------------SRAM MEMORY TO OLED FROM HERE DOWN ----------------------------------*/
@@ -153,13 +126,10 @@ void oled_goto_pos(uint8_t row, uint8_t col){
 
 void oled_write_d_sram(uint8_t data, uint8_t line, uint8_t col){
   /*  Divides the SRAm into pages corresponding to oledRAM
-      Line is page!!!
-  */
+    Line is page!!*/
   volatile char *ext_ram = (char *) 0x1800 + (128*line);
-
   ext_ram[col] = data;
 }
-
 
 void oled_write_letter_sram(const char letter, uint8_t fontSize, uint8_t line, uint8_t col){
   uint8_t newletter = letter -32;
@@ -206,11 +176,11 @@ void  oled_read_page_sram(uint8_t line){
     write_d(oled_read_d_sram(line, i));
   }
 }
+
 void oled_read_screen_sram(){
   for (int i = 0; i < 8; i++){
     oled_read_page_sram(i);
   }
-  //_delay_ms(50);
 }
 
 
@@ -228,9 +198,7 @@ void oled_print_sram(const char* data, uint8_t fontSize, uint8_t line, uint8_t c
 void oled_write_pixel_sram(uint8_t row, uint8_t col){
   uint8_t page = row / 8;
   uint8_t row_in_page = row - (page * 8);
-
   uint8_t data = 1 << row_in_page;
-
   oled_write_d_sram(data, page, col);
 }
 
@@ -288,13 +256,10 @@ void oled_write_platform_horizontal_sram(uint8_t line, uint8_t col, uint8_t heig
 }
 
 void oled_animation_shoot_ball_sram(uint8_t line, uint8_t startHeightPlat, uint8_t* distanceFromStart, uint8_t* sign){
-
   if (*distanceFromStart <= (startHeightPlat + 1)){
     oled_write_platform_horizontal_sram(line, 0, *distanceFromStart);
     oled_animation_circle_horizontal_sram(line, distanceFromStart, sign);
   }
-  //printf("Height: %d\n\r", height);
-  //printf("Distance: %d\r\n", *distanceFromStart);
   else{
     oled_write_platform_horizontal_sram(line, 0, startHeightPlat);
     oled_animation_circle_horizontal_sram(line, distanceFromStart, sign);

@@ -6,7 +6,6 @@
 #define BAUD 9600
 #define MYUBRR FOSC/16/BAUD-1
 
-
 #include <stdio.h>
 #include <util/delay.h>           // for _delay_ms()
 #include <avr/io.h>

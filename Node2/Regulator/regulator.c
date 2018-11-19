@@ -47,14 +47,10 @@ uint8_t regulator(uint8_t* dir, uint8_t setPoint, uint8_t processValue, regulato
         *dir = 1;
     }
 
-
     // Calculate P-term
-
     uint8_t pTerm = regData->P_Factor*error;
 
-
-    // Implement I-term and D-term later
-
+    //Calculate I-term
     uint8_t temp = regData->sumError + (-1)*(*dir)*error;
     float iTerm;
     if (temp > regData->maxSumError) {
@@ -70,8 +66,7 @@ uint8_t regulator(uint8_t* dir, uint8_t setPoint, uint8_t processValue, regulato
     }
     uint16_t inputTemp = pTerm + iTerm/5.0;
 
-    //Float and shit, needed to scale down to get the correct number
-    //Change tuning to make harder/other modes.
+    //Float needed to scale down to get the correct number
     uint8_t input = pTerm +iTerm/5.0;
     //overflow protection
     if(inputTemp > 255){

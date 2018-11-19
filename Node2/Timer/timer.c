@@ -28,27 +28,20 @@ void timer_pwm_init(){
   ICR1H = 0x9C;
   ICR1L = 0x3F;
 
-// Default value for duty cycle
+  // Default value for duty cycle
   OCR1AH = 0x0B;
   OCR1AL = 0xB8;
+  //HIGH: 0x1068
+  //LOW: 0x0708
 
-//HIGH: 0x1068
-//LOW: 0x0708
-
-// Clear counter
+  // Clear counter
   TCNT1H = 0;
   TCNT1L = 0;
 
 }
 
 void joystick_to_PWM(can_message msg){
-    //joystick_can_send();
-    /*if ((mcp2515_read(MCP_CANINTF) & 0b00000001)) {
-      msg = can_message_receive();
-    }*/
     unsigned int tempVal = ((4200-1800)/255.0)*msg.data[0] + 1800;
-    //printf("%d\n", tempVal);
-
     if((tempVal > 4200)){
       OCR1AH = 0x10;
       OCR1AL = 0x68;
@@ -59,7 +52,6 @@ void joystick_to_PWM(can_message msg){
     } else {
       OCR1AH = tempVal >> 8;
       OCR1AL = tempVal & 0xFF;
-
     }
 }
 

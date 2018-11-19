@@ -1,8 +1,9 @@
 #ifndef __MCP2515_H
 #define __MCP2515_H
+#include <util/delay.h>
+#include "SPI.h"
 
 /*
-mcp2515.h
 
 This file contains constants that are specific to the MCP2515.
 
@@ -128,13 +129,11 @@ Copyright 2003 Kimberly Otten Software Consulting
 #define SJW3            0x80
 #define SJW4            0xC0
 
-
 // CNF2 Register Values
 
 #define BTLMODE			0x80
 #define SAMPLE_1X       0x00
 #define SAMPLE_3X       0x40
-
 
 // CNF3 Register Values
 
@@ -142,7 +141,6 @@ Copyright 2003 Kimberly Otten Software Consulting
 #define SOF_DISABLE		0x00
 #define WAKFIL_ENABLE	0x40
 #define WAKFIL_DISABLE	0x00
-
 
 // CANINTF Register Bitsmcp2515_read_status
 
@@ -156,7 +154,6 @@ Copyright 2003 Kimberly Otten Software Consulting
 #define MCP_MERRF		0x80
 
 //FUNCTIONS
-
 uint8_t mcp2515_read(uint8_t address);
 void mcp2515_write(uint8_t address,uint8_t data);
 void mcp2515_request_to_send(uint8_t TXiRTS);

@@ -1,8 +1,3 @@
-#include "oled.h"
-#include <avr/io.h>
-#include <stdio.h>
-#include <util/delay.h>           // for _delay_ms()
-#include "usbBoard.h"
 #include "menu.h"
 
 menu_page page_init(const char* name, const menu_page* parent, const uint8_t size, const menu_page** options, const int id ){
@@ -16,7 +11,6 @@ menu_page page_init(const char* name, const menu_page* parent, const uint8_t siz
     page.id = id;
     return page;
 }
-
 
 menu_page menu_initialize(){
 
@@ -35,20 +29,16 @@ menu_page menu_initialize(){
   menu_page difOpt[] = {&Easy, &Medium, &Hard};
   SetDifficulty = page_init("Set Difficulty", &mainMenu, 3, difOpt,8);
 
-
-  menu_page Debugging = page_init("Debug", &mainMenu, 0, NULL, 9);
-
   menu_page See = page_init("See", &SeeResetHighscore, 0, NULL, 10);
   menu_page Reset = page_init("Reset", &SeeResetHighscore, 0, NULL, 11);
   menu_page seReOpt[] = {&See, &Reset};
   SeeResetHighscore = page_init("See/Reset Higscore", &mainMenu, 2, seReOpt, 12);
 
-  menu_page mainOpt[] = {&StartNewGame, &SeeResetHighscore, &CalibrateJoystick, &SetDifficulty};//, &Debugging};
+  menu_page mainOpt[] = {&StartNewGame, &SeeResetHighscore, &CalibrateJoystick, &SetDifficulty};
 
   mainMenu = page_init("Main Menu", NULL, 4, mainOpt, 13);
   return mainMenu;
 }
-
 
 void OLED_print_arrow(uint8_t row, uint8_t col){
     oled_goto_pos(row, col);
@@ -67,9 +57,7 @@ void OLED_erase_arrow(uint8_t row, uint8_t col){
     write_d(0b00000000);
 }
 
-
 void update_menu_page(menu_page page, enum joystick_direction dir,int position, menu_page** options){
-    //oled_goto_pos(0, 0);//63-(strlen(page.name)/2));
     int varFont = 8;
     uint8_t strlength;
     for(strlength = 0; page.name[strlength+1] != '\0'; ++strlength);
@@ -82,13 +70,8 @@ void update_menu_page(menu_page page, enum joystick_direction dir,int position, 
         if(i == position){
             OLED_print_arrow_sram(2+(position), 0);
         }
-        //oled_goto_page(i+2);
-        //oled_goto_column(10);
         oled_print_sram((*options[i]).name, 4, i+2, 10);
-        //oled_read_page_sram(i+2);
     }
-    //oled_read_screen_sram();
-
 }
 
 int cursor_counter(menu_page page, enum joystick_direction dir, int arrowPos){

@@ -6,7 +6,6 @@
 #define BAUD 9600
 #define MYUBRR FOSC/16/BAUD-1
 
-
 #include <stdio.h>
 #include <util/delay.h>           // for _delay_ms()
 #include <avr/io.h>
@@ -34,9 +33,6 @@ int main(void){
   adc_node2_config();
   TWI_Master_Initialise();
   motor_initialize();
-  //Initialize regulator
-
-
 
   /* INTERRUPT ENABLE */
   // Pin input
@@ -79,7 +75,6 @@ int main(void){
         break;
       default:
         break;
-
     }
     //ONLY PLAY GAME IF SIGNAL IS SENT!
     if(msg.id == 34){
@@ -120,11 +115,9 @@ int main(void){
         solenoid_controller(msg.data[2]);
         joystick_to_PWM(msg);
         TWI_motor_control(input, &dir);
-    }
+      }
     absolutePositionRotation = 0;
-  }
-
-
+    }
   }
 }
 

@@ -1,6 +1,8 @@
 #include <util/delay.h>
 #include <stdio.h>
 #include <avr/io.h>
+#include "adc.h"
+#include "CAN.h"
 
 #ifndef usbBoard_h
 #define usbBoard_h

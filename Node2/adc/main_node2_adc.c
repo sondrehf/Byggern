@@ -16,7 +16,6 @@ int main(){
     uint8_t counter = 0;
     while(1){
       counter = score_counter(counter);
-
     }
     return 0;
 }

@@ -1,5 +1,4 @@
-#include <avr/io.h>
-#include <stdio.h>
+#include "SPI.h"
 #define FOSC 4915200// Clock Speed
 #define BAUD 9600
 #define MYUBRR FOSC/16/BAUD-1
@@ -18,21 +17,16 @@ void SPI_init(){
   //SPCR = (0<<CPOL)|(1<<CPHA)|(0<<DORD);
 }
 
-
 uint8_t SPI_read(){
   uint8_t dummyMessage = 0x00;
   SPDR = dummyMessage;
-
   while (!(SPSR & (1<<SPIF)));
    // Wait for transmission to complete
-
   return SPDR;
 }
 
 void SPI_send(uint8_t data){
-
   SPDR = data;
   while (!(SPSR & (1<<SPIF)));
     // Wait for transmission to complete
-
 }

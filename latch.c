@@ -2,7 +2,7 @@
 #define F_CPU 4915200 // or whatever may be your frequency
 #endif
 #include <avr/io.h>
-#include <util/delay.h>                // for _delay_ms()
+#include <util/delay.h>          // for _delay_ms()
 
 void extern_mem_init(){
   MCUCR = (1<<SRE);

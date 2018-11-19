@@ -1,8 +1,4 @@
-//#include <util/delay.h>                // for _delay_ms()
-#include <avr/io.h>
-#include <stdio.h>
-//#include <util/delay.h>
-
+#include "uart.h"
 
 void USART_init(unsigned int ubrr){
   //setting baud rate
@@ -16,19 +12,14 @@ void USART_init(unsigned int ubrr){
 }
 
 void USART_transmit(uint8_t message){
-  while (!(UCSR0A & (1<<UDRE0)));// & 0b1000000)); //Waiting for empty data buffer
+  while (!(UCSR0A & (1<<UDRE0))); //Waiting for empty data buffer
     /* Do nothing */
   UDR0 = message;
 }
 char USART_receive(){
-  /*if(UCSR0A & (1<<R)//0b10000000){ //Checking receive complete register (RXC high)
-    UCSR0A &= ~(1 << RXC0);
-*/
-while(!(UCSR0A & (1 << RXC0)));
+  while(!(UCSR0A & (1 << RXC0)));
     return UDR0;
 }
-
-//void fdevopen(USART_transmit(), USART_receive())
 
 FILE* printf_init(){
     return fdevopen(USART_transmit, USART_receive);

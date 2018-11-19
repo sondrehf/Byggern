@@ -1,7 +1,4 @@
 #include "usbBoard.h"
-#include "adc.h"
-#include "CAN.h"
-
 
 uint8_t get_y_raw_value(){
   return get_channel_value(0);
@@ -17,11 +14,9 @@ struct joystick_angle calculate_angle(){
 
   pos.xAngle = (uint8_t)pos.xRawValue*(180.0/255);
   pos.yAngle = (uint8_t)pos.yRawValue*(180.0/255);
-  //printf("X-Angle: %d\n\r, Y-Angle: %d\n\r", b.xAngle, b.yAngle);
 
   pos.xAnglePercent = (int)((pos.xRawValue*(100.0/255)-50)*2);
   pos.yAnglePercent = (int)((pos.yRawValue*(100.0/255)-50)*2);
-  //printf("X-Angle: %d \n\r, Y-Angle: %d \n\r", b.xAnglePercent, b.yAnglePercent);
 
   return pos;
 }
@@ -90,7 +85,7 @@ void print_dir(enum joystick_direction dir){
     break;
   default:
     break;
-}
+  }
 }
 
 void motor_input_can_send(){
@@ -104,41 +99,4 @@ void motor_input_can_send(){
   //Button
   msg.data[2] = !get_button_value();
   can_message_send(&msg);
-
-
 }
-
-
-/*
-struct joystick_angle pos = calculate_angle();
-struct slider_pos slider = calculate_slider();
-enum joystick_direction dir = get_joystick_direction(pos);
-//printf("x: %d, y: %d \t\t", pos.xRawValue, pos.yRawValue);
-
-switch (dir) {
-  case NEUTRAL:
-    printf("Neutral\t\t");
-    break;
-  case UP:
-    printf("UP\t\t");
-    break;
-  case DOWN:
-    printf("DOWN\t\t");
-    break;
-  case RIGHT:
-    printf("RIGHT\t\t");
-    break;
-  case LEFT:
-    printf("LEFT\t\t");
-    break;
-  case ERROR:
-    printf("ERROR\t\t");
-    break;
-  default:
-    break;
-}uint8_t get_right_value(){
-  return get_channel_value(3);
-}
-
-printf("Left: %d, Right: %d \n\r", slider.leftPercent, slider.rightPercent);
-*/

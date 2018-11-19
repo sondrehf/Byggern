@@ -17,6 +17,7 @@ static volatile int encoderValue;
 #define OE PH5
 #define SEL PH3
 #define RST PH6
+
 void motor_initialize(){
   //Select direction of motor direction pin and motor enable pin
   DDRH |= (1<<EN) | (1<<DIR);
@@ -42,7 +43,6 @@ void TWI_motor_control(uint8_t input, uint8_t* dir){
     msg_array[2] = input;
     PORTH &= ~(1<<DIR);
   }
-
   TWI_Start_Transceiver_With_Data(msg_array, 3);
 }
 
@@ -81,7 +81,6 @@ void initial_position(){
 }
 
 void solenoid_controller(uint8_t button){
-  //printf("Button: %d\n\r", button);
   if (button == 1){
       PORTD |= (1<<PD2);
   }

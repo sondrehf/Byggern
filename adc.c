@@ -1,10 +1,7 @@
 #ifndef F_CPU
 #define F_CPU 4915200
 #endif
-#include <util/delay.h>
-#include <stdio.h>
-#include <avr/io.h>
-
+#include "adc.h"
 
 /*---------FACTS ABOUT THE JOYSTICK!-----------*/
 /*
@@ -39,6 +36,7 @@ void adc_config(uint8_t channel){
     DDRB &= ~(0<<PB0);
   }
 }
+
 uint8_t get_channel_value(uint8_t channel){
   volatile char * ext_adc = (char*) 0x1400;
   ext_adc[0] = 4+channel; //config channel CH(channel) (single ended)

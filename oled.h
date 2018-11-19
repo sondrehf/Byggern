@@ -1,5 +1,12 @@
-#include <stdio.h>
 
+#include <stdio.h>
+#include <util/delay.h>           // for _delay_ms()
+#include <avr/io.h>
+#include <avr/pgmspace.h>
+#include <avr/interrupt.h>
+
+#ifndef oled_h
+#define oled_h
 
 void oled_init();
 void oled_reset();
@@ -34,3 +41,5 @@ void OLED_erase_arrow_sram(uint8_t row, uint8_t col);
 
 /* --------------------Timer interrupt ----------------------------------*/
 void timer_interrupt_for_oled_init();
+
+#endif
