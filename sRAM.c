@@ -63,7 +63,6 @@ void init_highScore(){
   for(uint8_t i = 0; i<24; i++){
     write_to_EEPROM(i, 0);
   }
-  //printf("%s\n","Highscores reset" );
 }
 
 void saveHighScore(uint8_t score){
@@ -78,7 +77,7 @@ void saveHighScore(uint8_t score){
     i++;
     USART_transmit(temp);
   }
-  //printf("\n\r%s", "Thats gay" );
+
 
   for(uint8_t i = 3; i<4*6; i+=4){
     if(score > read_from_EEPROM(i)){
