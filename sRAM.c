@@ -68,7 +68,7 @@ void init_highScore(){
 }
 
 void saveHighScore(uint8_t score){
-  printf("Name?: ");
+  printf("Name:\n\r ");
   char name[3];
   char temp = ' ';
   uint8_t i = 0;

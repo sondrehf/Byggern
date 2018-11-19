@@ -73,6 +73,7 @@ void play_game(){
     if((msg).id==1){
       oled_clear_sram();
       oled_print_sram("YOUR SCORE WAS: ", 8, 4 ,0);
+      oled_print_sram("ENTER NAME ON PC", 5, 3, 0);
       itoa(msg.data[0], score,10);
       printf("%d\n",msg.data[0] );
       oled_print_sram(&score, 8, 5, 0);
@@ -93,7 +94,6 @@ void play_game(){
 void state_machine(menu_page* page){
   cli();
   /* INTERRUPT ENABLE */
-  //timer_interrupt_for_can_init();
   // Button input
   DDRE &= ~(1<<PE0);
   // Disable global interrupts

@@ -65,6 +65,7 @@ int main(void){
   while(1){
     if(receivedMessage){
       msg = can_message_receive();
+      printf("K: %d I: %d\n\r", msg.data[0], msg.data[1] );
     }
     switch (msg.id) {
       case 5:
