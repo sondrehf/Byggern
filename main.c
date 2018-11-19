@@ -81,6 +81,7 @@ int main(void){
     can_message_send(&diffMsg);
     while(1){
       if (update_oled){
+        menu_page mainMenu = menu_initialize();
         oled_clear_sram();
 
         oled_animation_shoot_ball_sram(7, 20, &distanceFromStart, &sign);

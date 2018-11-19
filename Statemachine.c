@@ -147,11 +147,13 @@ void state_machine(menu_page* page){
         break;
       case SEE:
         display_scores();
-        (*page).id = SEERESETHIGHSCORE;
+        (*page).id = SETDIFFICULTY;
+        //(page) = page->parent;
         break;
       case RESET:
         init_highScore();
-        (page) = page->parent;
+        display_scores();
+        (*page).id = SETDIFFICULTY;
         break;
       default:
         break;
