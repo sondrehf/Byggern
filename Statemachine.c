@@ -46,19 +46,6 @@ void display_scores(){
 }
 
 void play_game(){
-  cli();
-  /* INTERRUPT ENABLE */
-  //timer_interrupt_for_can_init();
-  // Button input
-  DDRE &= ~(1<<PE0);
-  // Disable global interrupts
-  // Interrupt on falling edge PE0
-  EMCUCR &= ~(1<<ISC2);
-  // Enable interrupt on PE0
-  GICR |= (1<<INT2);
-
-  // Enable global interrupts
-  sei();
 
   uint32_t startTime, endTime, timeCount;
   timeCount = 0;
@@ -70,9 +57,9 @@ void play_game(){
 
   char score[10];
   while(!gameover){
-    if (receivedMessage){
+    /*if (receivedMessage){
       msg = can_message_receive();
-    }
+    }*/
 
     motor_input_can_send();
     sendMessage = 0;
@@ -104,6 +91,19 @@ void play_game(){
 
 
 void state_machine(menu_page* page){
+  cli();
+  /* INTERRUPT ENABLE */
+  //timer_interrupt_for_can_init();
+  // Button input
+  DDRE &= ~(1<<PE0);
+  // Disable global interrupts
+  // Interrupt on falling edge PE0
+  EMCUCR &= ~(1<<ISC2);
+  // Enable interrupt on PE0
+  GICR |= (1<<INT2);
+
+  // Enable global interrupts
+  sei();
     switch ((*page).id){
       case STARTNEWGAME: //Start new game
         *page = *page->parent->options[3];
@@ -165,6 +165,7 @@ void state_machine(menu_page* page){
 //Interrupt for received can message
 ISR(INT2_vect){
   receivedMessage = 1;
+  msg = can_message_receive();
   //printf("%d\n",msg.id );
 }
 
