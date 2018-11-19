@@ -96,6 +96,8 @@ int main(void){
         if(lost){
           gameover.id = 1;
           gameover.length = 1;
+          //stop engine
+          TWI_motor_control(0,0);
           printf("%d\n", gameover.id );
           can_message_send(&gameover);
           printf("%s\n","Game over bitch");
