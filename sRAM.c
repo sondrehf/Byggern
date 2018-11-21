@@ -61,13 +61,18 @@ unsigned char read_from_EEPROM(uint8_t uiAddress){
 }
 
 void init_highScore(){
+    //46 for ...
   for(uint8_t i = 0; i<24; i++){
-    write_to_EEPROM(i, 0);
+    write_to_EEPROM(i, 46);
+  }
+  //0 for scoreValue
+  for(uint8_t i = 3; i<24; i+=4){
+      write_to_EEPROM(i, 0);
   }
 }
 
 void saveHighScore(uint8_t score){
-  read_data_on_highscore();
+  //read_data_on_highscore();
   printf("Name:\n\r ");
   unsigned char name[3];
   char temp = ' ';

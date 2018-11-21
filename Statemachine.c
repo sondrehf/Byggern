@@ -26,9 +26,9 @@ void display_scores(){
     lineNumber[1] = '.';
     lineNumber[2] = '\0';
     oled_print_sram(&lineNumber, 5, i, 0);
-    oled_write_letter_sram(read_from_EEPROM(j-3)-128, 5, i, 16);
-    oled_write_letter_sram(read_from_EEPROM(j-2)-128, 5, i, 24);
-    oled_write_letter_sram(read_from_EEPROM(j-1)-128, 5, i, 32);
+    oled_write_letter_sram(read_from_EEPROM(j-3), 5, i, 16);
+    oled_write_letter_sram(read_from_EEPROM(j-2), 5, i, 24);
+    oled_write_letter_sram(read_from_EEPROM(j-1), 5, i, 32);
     sprintf(number, "%d", read_from_EEPROM(j));
     oled_print_sram(&number, 5, i, 50);
     i++;
